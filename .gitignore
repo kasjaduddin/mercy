@@ -41,3 +41,6 @@ AppPackage/
 
 # Blazor
 Client/wwwroot/
+
+# Environment and secret keys
+*.env
