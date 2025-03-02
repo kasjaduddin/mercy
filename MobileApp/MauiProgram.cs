@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using MobileApp.Services;
+using DotNetEnv;
 
 namespace MobileApp
 {
@@ -16,10 +18,14 @@ namespace MobileApp
 
             builder.Services.AddMauiBlazorWebView();
 
+            builder.Services.AddScoped<EmergencyCall>();
+
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #endif
+
+            Env.Load();
 
             return builder.Build();
         }
