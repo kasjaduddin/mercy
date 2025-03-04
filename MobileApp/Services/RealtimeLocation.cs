@@ -9,7 +9,7 @@ namespace MobileApp.Services
 {
     public class RealtimeLocation
     {
-        private CancellationTokenSource _cancelTokenSource;
+        private CancellationTokenSource? _cancelTokenSource;
         private bool _isCheckingLocation;
 
         public async Task GetCurrentLocation()
@@ -22,10 +22,10 @@ namespace MobileApp.Services
 
                 _cancelTokenSource = new CancellationTokenSource();
 
-                Location location = await Geolocation.Default.GetLocationAsync(request, _cancelTokenSource.Token);
+                Location? location = await Geolocation.Default.GetLocationAsync(request, _cancelTokenSource.Token);
 
                 if (location != null)
-                    Console.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
+                    await GetGeocodeReverseData(location.Latitude, location.Longitude);
             }
             catch (Exception ex)
             {
@@ -35,6 +35,29 @@ namespace MobileApp.Services
             {
                 _isCheckingLocation = false;
             }
+        }
+
+        private async Task<string> GetGeocodeReverseData(double latitude, double longitude)
+        {
+            IEnumerable<Placemark> placemarks = await Geocoding.Default.GetPlacemarksAsync(latitude, longitude);
+
+            Placemark? placemark = placemarks?.FirstOrDefault();
+
+            if (placemark != null)
+            {
+                return
+                    $"AdminArea:       {placemark.AdminArea}\n" +
+                    $"CountryCode:     {placemark.CountryCode}\n" +
+                    $"CountryName:     {placemark.CountryName}\n" +
+                    $"FeatureName:     {placemark.FeatureName}\n" +
+                    $"Locality:        {placemark.Locality}\n" +
+                    $"PostalCode:      {placemark.PostalCode}\n" +
+                    $"SubAdminArea:    {placemark.SubAdminArea}\n" +
+                    $"SubLocality:     {placemark.SubLocality}\n" +
+                    $"SubThoroughfare: {placemark.SubThoroughfare}\n" +
+                    $"Thoroughfare:    {placemark.Thoroughfare}\n";
+            }
+            return "";
         }
 
         public void CancelRequest()
