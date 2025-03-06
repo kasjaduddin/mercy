@@ -44,3 +44,6 @@ Client/wwwroot/
 
 # Environment and secret keys
 *.env
+
+# Development page
+MobileApp/Components/Pages/Dev.razor
