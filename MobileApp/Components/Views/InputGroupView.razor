@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+
+<div class="field-component mb-3">
+    <label class="form-label field-label">@Label</label>
+    <input type="@Type" 
+           class="form-control field-input" 
+           value="@Value" 
+           @oninput="OnInputHandler" 
+           placeholder="@Placeholder" 
+           disabled="@Disabled" />
+</div>
+
+<style>
+    .field-component .field-label {
+        font-size: 2.5rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #000000;
+    }
+
+    .field-component .field-input {
+        border: 2px solid #000000;
+        border-radius: 1.5rem;
+        padding: 1.25rem;
+        font-size: 1rem;
+        height: auto;
+    }
+
+    .field-component .field-input:focus {
+        box-shadow: none;
+        border-color: #000000;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public string Label { get; set; } = "Field";
+
+    [Parameter]
+    public string Value { get; set; } = "";
+
+    [Parameter]
+    public string Type { get; set; } = "text";
+
+    [Parameter]
+    public string Placeholder { get; set; } = "";
+
+    [Parameter]
+    public bool Disabled { get; set; } = false;
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    private async Task OnInputHandler(ChangeEventArgs e)
+    {
+        Value = e.Value.ToString();
+        await ValueChanged.InvokeAsync(Value);
+    }
+}
