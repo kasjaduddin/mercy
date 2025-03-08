@@ -1,0 +1,59 @@
+﻿@page "/signup"
+
+<div class="container px-8 mt-48">
+    <div class="text-center text-2xl font-bold mb-4">
+        <h1>Welcome to MERCy-Mobile!</h1>
+    </div>
+    <div>
+        <InputGroupView Label="Name"
+                        Value="@username"
+                        Placeholder="Enter your name"
+                        ErrorMessage="@usernameError"
+                        OnChange="OnUsernameChanged" />
+
+        <InputGroupView Label="Phone Number"
+                        Type="text"
+                        Value="@phoneNumber"
+                        Placeholder="Enter your phone number"
+                        ErrorMessage="@phoneNumberError"
+                        OnChange="OnPhoneNumberChanged" />
+    </div>
+    <div class="flex justify-center">
+        <SaveButtonView OnClick="@HandleSave" />
+    </div>
+</div>
+
+@code {
+    private string username = "";
+    private string phoneNumber = "";
+    private string usernameError = "";
+    private string phoneNumberError = "";
+
+    private void OnUsernameChanged(ChangeEventArgs e)
+    {
+        username = e.Value?.ToString() ?? "";
+        usernameError = string.IsNullOrEmpty(username) ? "Username cannot be empty." : "";
+    }
+
+    private void OnPhoneNumberChanged(ChangeEventArgs e)
+    {
+        phoneNumber = e.Value?.ToString() ?? "";
+        phoneNumberError = string.IsNullOrEmpty(phoneNumber) ? "Phone number cannot be empty." : "";
+    }
+
+    private async Task HandleSave()
+    {
+        if (string.IsNullOrEmpty(username))
+        {
+            usernameError = "Username cannot be empty.";
+        }
+        if (string.IsNullOrEmpty(phoneNumber))
+        {
+            phoneNumberError = "Phone number cannot be empty.";
+        }
+        if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(phoneNumber))
+        {
+            // Save the data
+        }
+    }
+}
