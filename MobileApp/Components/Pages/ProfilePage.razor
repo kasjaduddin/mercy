@@ -1,0 +1,23 @@
+﻿@page "/profile"
+
+<div class="container flex flex-col px-8 mt-2">
+    <div>
+        <ProfilePictureView />
+    </div>
+    <div class="text-black text-center text-xl font-bold">
+        <h1>Uddin</h1>
+    </div>
+    <div class="text-black text-center text-xl mb-4">
+        <h1>+62 xxx-xxxx-xxxx</h1>
+    </div>
+    <div>
+        <EditProfileButtonView OnClick="@HandleEditProfile" />
+    </div>
+</div>
+
+@code {
+    private async Task HandleEditProfile()
+    {
+        // Open edit profile page
+    }
+}
