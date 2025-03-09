@@ -36,6 +36,38 @@ h1:focus {
     color: #e50000;
 }
 
+.bg-primary {
+    background-color: white;
+}
+
+.bg-primary-dark {
+    background-color: #F4F4F4;
+}
+
+.bg-secondary {
+    background-color: #161D6F;
+}
+
+.bg-accent {
+    background-color: rgba(60, 60, 60, 0.8);
+}
+
+.text-primary {
+    color: white;
+}
+
+.text-primary-dark {
+    color: #F4F4F4;
+}
+
+.text-secondary {
+    color: #161D6F;
+}
+
+.text-accent {
+    color: #3C3C3C;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
