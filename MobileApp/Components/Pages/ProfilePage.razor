@@ -5,10 +5,10 @@
         <ProfilePictureView />
     </div>
     <div class="text-black text-center text-xl font-bold">
-        <h1>Uddin</h1>
+        <h1>@username</h1>
     </div>
     <div class="text-black text-center text-xl mb-4">
-        <h1>+62 xxx-xxxx-xxxx</h1>
+        <h1>@phoneNumber</h1>
     </div>
     <div>
         <EditProfileButtonView OnClick="@HandleEditProfile" />
@@ -16,6 +16,9 @@
 </div>
 
 @code {
+    private string username = "";
+    private string phoneNumber = "";
+
     private async Task HandleEditProfile()
     {
         // Open edit profile page
