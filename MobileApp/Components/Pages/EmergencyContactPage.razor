@@ -1,0 +1,22 @@
+﻿@page "/contact"
+
+<div class="container flex flex-col px-8 mt-2">
+    <div class="text-accent text-2xl font-bold mb-6">
+        <h1>Emergency Contact</h1>
+    </div>
+    <div>
+        <EditEmergencyContactButtonView Label="@contactName"
+                                        PhoneNumber="@phoneNumber"
+                                        OnEdit="@HandleEdit" />
+    </div>
+</div>
+
+@code {
+    private string contactName = "";
+    private string phoneNumber = "";
+
+    private async Task HandleEdit()
+    {
+        // Open edit emergency contact page
+    }
+}
