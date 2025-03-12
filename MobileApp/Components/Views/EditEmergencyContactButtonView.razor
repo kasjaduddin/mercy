@@ -1,6 +1,6 @@
 ﻿<button type="button" class="w-full border-2 border-black rounded-lg py-4 flex justify-between items-center hover:text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:border-transparent" @onclick="OnEditClick">
     <div class="flex flex-col text-start ps-4">
-        <span class="text-xl font-bold">@Label</span>
+        <span class="text-xl font-bold">@Name</span>
         <span class="text-lg">@PhoneNumber</span>
     </div>
     <div class="justify-self-center pe-7">
@@ -12,10 +12,10 @@
     private string? imageSource = $"../resources/images/edit_icon.png";
 
     [Parameter]
-    public string Label { get; set; } = "Name";
+    public string Name { get; set; } = "";
 
     [Parameter]
-    public string PhoneNumber { get; set; } = "+62 xxx xxxx xxxx";
+    public string PhoneNumber { get; set; } = "";
 
     [Parameter]
     public EventCallback<MouseEventArgs> OnEdit { get; set; }
