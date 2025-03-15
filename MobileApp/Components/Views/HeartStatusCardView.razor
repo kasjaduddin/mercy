@@ -1,0 +1,20 @@
+﻿<div class="w-full h-[200px] bg-[@StatusHexColor] rounded-md p-3 shadow-sm">
+    <div class="flex items-center">
+        <h1 class="text-secondary font-extrabold text-3xl">@Status</h1>
+        <img class="h-auto w-auto object-cover" src="@StatusImageSource" alt="Status Icon" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string StatusHexColor { get; set; } = "";
+
+    [Parameter]
+    public string Status { get; set; } = "";
+
+    [Parameter]
+    public string? Information { get; set; } = "";
+
+    [Parameter]
+    public string? StatusImageSource { get; set; } = $"";
+}
