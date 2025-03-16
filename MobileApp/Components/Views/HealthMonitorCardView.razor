@@ -11,10 +11,10 @@
 
 @code {
     [Parameter]
-    public string? HexColor { get; set; } = "";
+    public string HexColor { get; set; } = "";
 
     [Parameter]
-    public string? ImageSource { get; set; } = $"";
+    public string ImageSource { get; set; } = $"";
 
     [Parameter]
     public string Label { get; set; } = "";
@@ -23,5 +23,5 @@
     public string LabelSize { get; set; } = "3xl";
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 }
