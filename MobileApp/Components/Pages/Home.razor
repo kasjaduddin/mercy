@@ -1,5 +1,65 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+<div class="container px-8 mt-2">
+    <div class="mb-1">
+        <h1 class="text-accent font-extrabold text-2xl">Hello, @userName</h1>
+        <p class="text-accent-light text-lg">@greeting</p>
+    </div>
+    <div>
+        <HeartStatusCardView HexColor="@statusHexColor"
+                             Status="@heartStatus"
+                             Information="@information"
+                             ImageSource="@statusIconSource" />
+    </div>
 
-Welcome to your new app.
+    <div class="grid grid-cols-2 gap-3 my-3">
+        <HealthMonitorCardView HexColor="@firstHexColor" ImageSource="@heartbeatIconSource" Label="@firstLabel">
+            @* Heartbeat Graph *@
+        </HealthMonitorCardView>
+        <HealthMonitorCardView HexColor="@secondHexColor" ImageSource="@heartbeatIconSource" Label="@secondLabel">
+            @* Heartbeat Graph *@
+        </HealthMonitorCardView>
+        <HealthMonitorCardView HexColor="@thirdHexColor" ImageSource="@heartbeatIconSource" Label="@thirdLabel">
+            @* Heartbeat Graph *@
+        </HealthMonitorCardView><HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="@heartRateLabelSize">
+            @* Heart Rate *@
+        </HealthMonitorCardView>
+    </div>
+    <div>
+        <OpenEmergencyContactButtonView Name="@emergencyContactName" />
+    </div>
+</div>
+
+@code {
+    private string userName = "Uddin";
+    private string greeting = "Good Evening";
+
+    private string statusHexColor = "#B9FBC0";
+    private string heartStatus = "Healthy Heart";
+    private string? information = "";
+
+    private string statusIconSource = $"../resources/images/healthy_heart_icon.png";
+
+    // private string statusHexColor = "#FBB9B9";
+    // private string heartStatus = "STEMI";
+    // private string? information = "Calling Ambulance...";
+
+    // private string statusIconSource = $"../resources/images/emergency_icon.png";
+
+    private string firstHexColor = "#DBCDF0";
+    private string secondHexColor = "#F7D9C4";
+    private string thirdHexColor = "#C6DEF1";
+    private string fourthHexColor = "#F2C6DE";
+
+    private string heartbeatIconSource = $"../resources/images/heartbeat_icon.png";
+    private string heartRateIconSource = $"../resources/images/heartbeat_icon.png";
+
+    private string firstLabel = "I";
+    private string secondLabel = "II";
+    private string thirdLabel = "III";
+    private string fourthLabel = "Heart Rate";
+
+    private string heartRateLabelSize = "xl";
+
+    private string emergencyContactName = "Ambulance";
+}
