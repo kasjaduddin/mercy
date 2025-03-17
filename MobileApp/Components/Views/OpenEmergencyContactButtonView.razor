@@ -1,6 +1,6 @@
 ﻿<button type="button" class="w-full min-h-24 border-2 border-black rounded-lg py-4 flex justify-between items-center hover:text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:border-transparent" @onclick="OnEditClick">
     <div class="flex flex-col text-start ps-4">
-        <span class="text-xl font-bold">@Label</span>
+        <span class="text-xl font-bold">Emergency Call</span>
         <span class="text-lg">@Name</span>
     </div>
     <div class="justify-self-center pe-7">
@@ -10,9 +10,6 @@
 
 @code {
     private string? imageSource = $"../resources/images/next_icon.png";
-
-    [Parameter]
-    public string Label { get; set; } = "Emergency Call";
 
     [Parameter]
     public string Name { get; set; } = "";
