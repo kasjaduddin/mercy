@@ -31,6 +31,6 @@ jobs:
           for branch in $BRANCHES; do
             git checkout $branch
             git pull origin $branch
-            git pull origin main --no-rebase
+            git pull origin main --allow-unrelated-histories
             git push origin $branch
           done
