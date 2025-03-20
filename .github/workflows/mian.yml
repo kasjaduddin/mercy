@@ -1,0 +1,36 @@
+name: Sync Branches
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Fetch All Branches
+        run: git fetch --all
+
+      - name: List Branches
+        id: list_branches
+        run: |
+          echo "::set-output name=branches::$(git branch -r | grep -v 'origin/main' | grep 'origin/' | sed 's/origin\///')"
+      
+      - name: Sync with Main
+        env:
+          BRANCHES: ${{ steps.list_branches.outputs.branches }}
+        run: |
+          for branch in $BRANCHES; do
+            git checkout $branch
+            git pull origin $branch
+            git pull origin main
+            git push origin $branch
+          done
