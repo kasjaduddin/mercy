@@ -1,16 +1,14 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    @if (false)
-    {
-        <div class="sidebar">
-            <NavMenu />
-        </div>
-    }
-
+<div class="page px-8 mt-2">
     <main>
-        <article class="content px-5">
+        <article class="content">
             @Body
         </article>
     </main>
+    <footer>
+        <div>
+            <NavMenu />
+        </div>
+    </footer>
 </div>

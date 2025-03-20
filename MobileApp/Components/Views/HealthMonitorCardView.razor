@@ -1,0 +1,27 @@
+﻿<div class="w-full h-52 bg-[@HexColor] rounded-md p-3 shadow-sm">
+    <div class="flex items-center">
+        <img class="h-auto w-auto object-cover" src="@ImageSource" alt="Heartbeat Icon" />
+        <h1 class="text-secondary font-extrabold text-@LabelSize">@Label</h1>
+    </div>
+
+    <div class="h-full">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string HexColor { get; set; } = "";
+
+    [Parameter]
+    public string ImageSource { get; set; } = $"";
+
+    [Parameter]
+    public string Label { get; set; } = "";
+
+    [Parameter]
+    public string LabelSize { get; set; } = "3xl";
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}
