@@ -1,32 +1,58 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">MobileApp</a>
+﻿@inject NavigationManager NavigationManager
+
+<div class="fixed h-22 bottom-0 left-0 right-0 bg-primary-dark px-8 border-t border-gray-200">
+    <div class="grid grid-cols-3 gap-6 items-center">
+        <NavLink href="@HomeUrl" Match="NavLinkMatch.All">
+            @if (CurrentUrl.EndsWith(HomeUrl))
+            {
+                    <div class="w-full border-t-4 border-secondary justify-items-center pt-4">
+                        <img src="../resources/images/home_icon_active.svg" alt="Home Opened">
+                    </div>
+            }
+            else
+            {
+                    <div class="w-full border-t-4 border-transparent justify-items-center pt-4">
+                    <img src="../resources/images/home_icon.svg" alt="Home">
+                    </div>
+            }
+        </NavLink>
+
+        <NavLink href="@ContactUrl">
+            @if (CurrentUrl.Contains(ContactUrl))
+            {
+                    <div class="w-full border-t-4 border-secondary justify-items-center pt-4">
+                        <img src="../resources/images/contact_icon_active.svg" alt="Contact Opened">
+                    </div>
+            }
+            else
+            {
+                    <div class="w-full border-t-4 border-transparent justify-items-center pt-4">
+                        <img src="../resources/images/contact_icon.svg" alt="Contact">
+                    </div>
+            }
+        </NavLink>
+
+        <NavLink href="@ProfileUrl">
+            @if (CurrentUrl.Contains(ProfileUrl))
+            {
+                    <div class="w-full border-t-4 border-secondary justify-items-center pt-4">
+                        <img src="../resources/images/profile_icon_active.svg" alt="Profile Opened">
+                    </div>
+            }
+            else
+            {
+                    <div class="w-full border-t-4 border-transparent justify-items-center pt-4">
+                        <img src="../resources/images/profile_icon.svg" alt="Profile">
+                    </div>
+            }
+        </NavLink>
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+@code {
+    private string CurrentUrl => NavigationManager.Uri;
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="dev">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Development
-            </NavLink>
-        </div>
-    </nav>
-</div>
+    public string HomeUrl { get; set; } = "/";
+    public string ContactUrl { get; set; } = "/contact";
+    public string ProfileUrl { get; set; } = "/profile";
+}

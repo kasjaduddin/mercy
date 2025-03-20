@@ -1,0 +1,23 @@
+﻿<div class="w-full h-28 bg-[@HexColor] rounded-md py-3 ps-5 pe-10 mb-2 shadow-sm">
+    <div class="flex justify-between">
+        <div>
+            <h1 class="text-black font-extrabold text-2xl">@Status</h1>
+            <p class="text-accent font-semibold text-base">@Information</p>
+        </div>
+        <img class="h-auto w-auto object-cover items-start" src="@ImageSource" alt="Status Icon" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string HexColor { get; set; } = "";
+
+    [Parameter]
+    public string Status { get; set; } = "";
+
+    [Parameter]
+    public string? Information { get; set; } = "";
+
+    [Parameter]
+    public string ImageSource { get; set; } = $"";
+}
