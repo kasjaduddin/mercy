@@ -1,38 +1,39 @@
-﻿@page "/signup"
+﻿@page "/contact/edit"
 
-<div class="container mt-44">
-    <div class="text-accent text-center text-2xl font-bold mb-4">
-        <h1>Welcome to MERCy-Mobile!</h1>
+<div class="container flex flex-col">
+    <div class="text-accent text-2xl font-bold mb-6">
+        <h1>Emergency Contact</h1>
     </div>
     <div>
         <InputGroupView Label="Name"
-                        Value="@username"
-                        Placeholder="Enter your name"
-                        ErrorMessage="@usernameError"
+                        Value="@contactName"
+                        Placeholder="Enter contact name"
+                        ErrorMessage="@contactNameError"
                         OnChange="OnUsernameChanged" />
 
         <InputGroupView Label="Phone Number"
                         Type="text"
                         Value="@phoneNumber"
-                        Placeholder="Enter your phone number"
+                        Placeholder="Enter contact phone number"
                         ErrorMessage="@phoneNumberError"
                         OnChange="OnPhoneNumberChanged" />
     </div>
-    <div class="flex justify-center">
+    <div class="flex justify-start gap-2">
         <SaveButtonView OnClick="@HandleSave" />
+        <CancelButtonView OnClick="@HandleCancel" />
     </div>
 </div>
 
 @code {
-    private string username = "";
+    private string contactName = "";
     private string phoneNumber = "";
-    private string usernameError = "";
+    private string contactNameError = "";
     private string phoneNumberError = "";
 
     private void OnUsernameChanged(ChangeEventArgs e)
     {
-        username = e.Value?.ToString() ?? "";
-        usernameError = string.IsNullOrEmpty(username) ? "Username cannot be empty." : "";
+        contactName = e.Value?.ToString() ?? "";
+        contactNameError = string.IsNullOrEmpty(contactName) ? "Username cannot be empty." : "";
     }
 
     private void OnPhoneNumberChanged(ChangeEventArgs e)
@@ -43,17 +44,22 @@
 
     private async Task HandleSave()
     {
-        if (string.IsNullOrEmpty(username))
+        if (string.IsNullOrEmpty(contactName))
         {
-            usernameError = "Username cannot be empty.";
+            contactNameError = "Username cannot be empty.";
         }
         if (string.IsNullOrEmpty(phoneNumber))
         {
             phoneNumberError = "Phone number cannot be empty.";
         }
-        if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(phoneNumber))
+        if (!string.IsNullOrEmpty(contactName) && !string.IsNullOrEmpty(phoneNumber))
         {
             // Save the data
         }
+    }
+
+    private async Task HandleCancel()
+    {
+        // Back to contact page
     }
 }

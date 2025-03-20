@@ -68,6 +68,14 @@ h1:focus {
     color: #3C3C3C;
 }
 
+.text-accent-light {
+    color: rgba(60, 60, 60, 0.8);
+}
+
+.border-secondary {
+    border-color: #161D6F;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
