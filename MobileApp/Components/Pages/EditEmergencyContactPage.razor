@@ -1,0 +1,65 @@
+﻿@page "/contact/edit"
+
+<div class="container flex flex-col">
+    <div class="text-accent text-2xl font-bold mb-6">
+        <h1>Emergency Contact</h1>
+    </div>
+    <div>
+        <InputGroupView Label="Name"
+                        Value="@contactName"
+                        Placeholder="Enter contact name"
+                        ErrorMessage="@contactNameError"
+                        OnChange="OnUsernameChanged" />
+
+        <InputGroupView Label="Phone Number"
+                        Type="text"
+                        Value="@phoneNumber"
+                        Placeholder="Enter contact phone number"
+                        ErrorMessage="@phoneNumberError"
+                        OnChange="OnPhoneNumberChanged" />
+    </div>
+    <div class="flex justify-start gap-2">
+        <SaveButtonView OnClick="@HandleSave" />
+        <CancelButtonView OnClick="@HandleCancel" />
+    </div>
+</div>
+
+@code {
+    private string contactName = "";
+    private string phoneNumber = "";
+    private string contactNameError = "";
+    private string phoneNumberError = "";
+
+    private void OnUsernameChanged(ChangeEventArgs e)
+    {
+        contactName = e.Value?.ToString() ?? "";
+        contactNameError = string.IsNullOrEmpty(contactName) ? "Username cannot be empty." : "";
+    }
+
+    private void OnPhoneNumberChanged(ChangeEventArgs e)
+    {
+        phoneNumber = e.Value?.ToString() ?? "";
+        phoneNumberError = string.IsNullOrEmpty(phoneNumber) ? "Phone number cannot be empty." : "";
+    }
+
+    private async Task HandleSave()
+    {
+        if (string.IsNullOrEmpty(contactName))
+        {
+            contactNameError = "Username cannot be empty.";
+        }
+        if (string.IsNullOrEmpty(phoneNumber))
+        {
+            phoneNumberError = "Phone number cannot be empty.";
+        }
+        if (!string.IsNullOrEmpty(contactName) && !string.IsNullOrEmpty(phoneNumber))
+        {
+            // Save the data
+        }
+    }
+
+    private async Task HandleCancel()
+    {
+        // Back to contact page
+    }
+}

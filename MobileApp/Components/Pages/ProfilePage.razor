@@ -1,0 +1,26 @@
+﻿@page "/profile"
+
+<div class="container flex flex-col">
+    <div>
+        <ProfilePictureView />
+    </div>
+    <div class="text-black text-center text-xl font-bold">
+        <h1>@username</h1>
+    </div>
+    <div class="text-black text-center text-xl mb-4">
+        <h1>@phoneNumber</h1>
+    </div>
+    <div>
+        <EditProfileButtonView OnClick="@HandleEditProfile" />
+    </div>
+</div>
+
+@code {
+    private string username = "";
+    private string phoneNumber = "";
+
+    private async Task HandleEditProfile()
+    {
+        // Open edit profile page
+    }
+}

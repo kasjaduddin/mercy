@@ -17,7 +17,7 @@ a, .btn-link {
 }
 
 .content {
-    padding-top: 1.1rem;
+    padding-top: 0rem;
 }
 
 h1:focus {
@@ -34,6 +34,46 @@ h1:focus {
 
 .validation-message {
     color: #e50000;
+}
+
+.bg-primary {
+    background-color: white;
+}
+
+.bg-primary-dark {
+    background-color: #F4F4F4;
+}
+
+.bg-secondary {
+    background-color: #161D6F;
+}
+
+.bg-accent {
+    background-color: rgba(60, 60, 60, 0.8);
+}
+
+.text-primary {
+    color: white;
+}
+
+.text-primary-dark {
+    color: #F4F4F4;
+}
+
+.text-secondary {
+    color: #161D6F;
+}
+
+.text-accent {
+    color: #3C3C3C;
+}
+
+.text-accent-light {
+    color: rgba(60, 60, 60, 0.8);
+}
+
+.border-secondary {
+    border-color: #161D6F;
 }
 
 #blazor-error-ui {
