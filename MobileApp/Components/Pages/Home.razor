@@ -1,6 +1,6 @@
 ﻿@page "/"
 
-<div class="container px-8 mt-2">
+<div class="container">
     <div class="mb-1">
         <h1 class="text-accent font-extrabold text-2xl">Hello, @userName</h1>
         <p class="text-accent-light text-lg">@greeting</p>
@@ -31,8 +31,8 @@
 </div>
 
 @code {
-    private string userName = "Uddin";
-    private string greeting = "Good Evening";
+    private string userName = "";
+    private string greeting = "";
 
     private string statusHexColor = "#B9FBC0";
     private string heartStatus = "Healthy Heart";
@@ -61,5 +61,5 @@
 
     private string heartRateLabelSize = "xl";
 
-    private string emergencyContactName = "Ambulance";
+    private string emergencyContactName = "";
 }
