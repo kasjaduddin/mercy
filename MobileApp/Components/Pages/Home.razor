@@ -7,9 +7,9 @@
     </div>
     <div>
         <HeartStatusCardView HexColor="@statusHexColor"
-                             Status="@heartStatus"
-                             Information="@information"
-                             ImageSource="@statusIconSource" />
+        Status="@heartStatus"
+        Information="@information"
+        ImageSource="@statusIconSource" />
     </div>
 
     <div class="grid grid-cols-2 gap-3 my-3">
@@ -21,7 +21,8 @@
         </HealthMonitorCardView>
         <HealthMonitorCardView HexColor="@thirdHexColor" ImageSource="@heartbeatIconSource" Label="@thirdLabel">
             @* Heartbeat Graph *@
-        </HealthMonitorCardView><HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="@heartRateLabelSize">
+        </HealthMonitorCardView>
+        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="@heartRateLabelSize">
             @* Heart Rate *@
         </HealthMonitorCardView>
     </div>
@@ -31,7 +32,7 @@
 </div>
 
 @code {
-    private string userName = "";
+    private string userName = App.CurrentUser.Username;
     private string greeting = "";
 
     private string statusHexColor = "#B9FBC0";
