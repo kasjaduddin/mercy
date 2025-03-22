@@ -1,22 +1,24 @@
 ﻿@page "/signup"
 
+@inject NavigationManager NavigationManager
+
 <div class="container mt-44">
     <div class="text-accent text-center text-2xl font-bold mb-4">
         <h1>Welcome to MERCy-Mobile!</h1>
     </div>
     <div>
         <InputGroupView Label="Name"
-                        Value="@username"
-                        Placeholder="Enter your name"
-                        ErrorMessage="@usernameError"
-                        OnChange="OnUsernameChanged" />
+        Value="@username"
+        Placeholder="Enter your name"
+        ErrorMessage="@usernameError"
+        OnChange="OnUsernameChanged" />
 
         <InputGroupView Label="Phone Number"
-                        Type="text"
-                        Value="@phoneNumber"
-                        Placeholder="Enter your phone number"
-                        ErrorMessage="@phoneNumberError"
-                        OnChange="OnPhoneNumberChanged" />
+        Type="tel"
+        Value="@phoneNumber"
+        Placeholder="Enter your phone number"
+        ErrorMessage="@phoneNumberError"
+        OnChange="OnPhoneNumberChanged" />
     </div>
     <div class="flex justify-center">
         <SaveButtonView OnClick="@HandleSave" />
@@ -39,21 +41,23 @@
     {
         phoneNumber = e.Value?.ToString() ?? "";
         phoneNumberError = string.IsNullOrEmpty(phoneNumber) ? "Phone number cannot be empty." : "";
+        phoneNumberError = phoneNumber.Length < 9 ? "Invalid phone number." : "";
     }
 
     private async Task HandleSave()
     {
-        if (string.IsNullOrEmpty(username))
+        if (string.IsNullOrEmpty(usernameError) && string.IsNullOrEmpty(phoneNumberError))
         {
-            usernameError = "Username cannot be empty.";
+            Preferences.Set("username", username);
+            Preferences.Set("user_phone_number", phoneNumber);
+
+            await LoadUserData(username, phoneNumber);
+            NavigationManager.NavigateTo("/");
         }
-        if (string.IsNullOrEmpty(phoneNumber))
-        {
-            phoneNumberError = "Phone number cannot be empty.";
-        }
-        if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(phoneNumber))
-        {
-            // Save the data
-        }
+    }
+
+    private async Task LoadUserData(string name,string phone)
+    {
+        App.LoadUserData(name, phone);
     }
 }

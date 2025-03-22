@@ -1,5 +1,4 @@
 ﻿using MobileApp.Models;
-using System.Text.Json;
 
 namespace MobileApp
 {
@@ -19,17 +18,22 @@ namespace MobileApp
         // Initialize User from JSON file
         private void LoadData()
         {
-            if (Preferences.ContainsKey("UserName"))
+            if (Preferences.ContainsKey("username"))
             {
-                string userName = Preferences.Get("UserName", "");
-                string userPhoneNumber = Preferences.Get("UserPhoneNumber", "");
-
-                CurrentUser = new User(userName, userPhoneNumber);
+                string userName = Preferences.Get("username", "");
+                string userPhoneNumber = Preferences.Get("user_phone_number", "");
+                
+                LoadUserData(userName, userPhoneNumber);
             }
             else
             {
                 CurrentUser = new User();
             }
+        }
+
+        public static void LoadUserData(string userName, string userPhoneNumber)
+        {
+            CurrentUser = new User(userName, userPhoneNumber);
         }
     }
 }
