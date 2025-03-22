@@ -18,8 +18,8 @@
 
         public User()
         {
-            _username = "Default User";
-            _phoneNumber = "+62xxxxxxxxxxx";
+            _username = String.Empty;
+            _phoneNumber = String.Empty;
         }
 
         public User(string username, string phoneNumber)
