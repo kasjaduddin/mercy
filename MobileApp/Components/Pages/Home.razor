@@ -1,5 +1,7 @@
 ﻿@page "/"
 
+@inject NavigationManager NavigationManager
+
 <div class="container">
     <div class="mb-1">
         <h1 class="text-accent font-extrabold text-2xl">Hello, @userName</h1>
@@ -32,7 +34,13 @@
 </div>
 
 @code {
-    private string userName = App.CurrentUser.Username;
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(App.CurrentUser?.Username))
+            NavigationManager.NavigateTo("/signup");
+    }
+
+    private string? userName = App.CurrentUser?.Username;
     private string greeting = "";
 
     private string statusHexColor = "#B9FBC0";
