@@ -62,7 +62,7 @@
 
     private async Task HandleCancel()
     {
-        // Back to contact page
+        NavigationManager.NavigateTo("/contact");
     }
 
     private async Task LoadContactsData(string name, string phone)
