@@ -59,7 +59,7 @@
 
     private async Task HandleCancel()
     {
-        // Back to profile page
+        NavigationManager.NavigateTo("/profile");
     }
 
     private async Task LoadUserData(string name, string phone)
