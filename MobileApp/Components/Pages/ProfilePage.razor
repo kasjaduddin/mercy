@@ -16,8 +16,8 @@
 </div>
 
 @code {
-    private string username = "";
-    private string phoneNumber = "";
+    private string username = App.CurrentUser.Username;
+    private string phoneNumber = App.CurrentUser.PhoneNumber;
 
     private async Task HandleEditProfile()
     {
