@@ -1,5 +1,7 @@
 ﻿@page "/profile"
 
+@inject NavigationManager NavigationManager
+
 <div class="container flex flex-col">
     <div>
         <ProfilePictureView />
@@ -21,6 +23,6 @@
 
     private async Task HandleEditProfile()
     {
-        // Open edit profile page
+        NavigationManager.NavigateTo("/profile/edit");
     }
 }
