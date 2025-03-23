@@ -20,7 +20,10 @@
     </div>
     <div class="flex justify-start gap-2">
         <SaveButtonView OnClick="@HandleSave" />
-        <CancelButtonView OnClick="@HandleCancel" />
+        @if (!string.IsNullOrEmpty(App.EmergencyContact?.ContactName))
+        {
+            <CancelButtonView OnClick="@HandleCancel" />
+        }
     </div>
 </div>
 

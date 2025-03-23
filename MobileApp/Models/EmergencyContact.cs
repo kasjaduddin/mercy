@@ -11,7 +11,7 @@ namespace MobileApp.Models
         private string _contactname;
         private string _phoneNumber;
 
-        public string Username
+        public string ContactName
         {
             get => _contactname;
             set => _contactname = value;
