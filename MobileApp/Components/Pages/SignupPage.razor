@@ -8,17 +8,17 @@
     </div>
     <div>
         <InputGroupView Label="Name"
-        Value="@username"
-        Placeholder="Enter your name"
-        ErrorMessage="@usernameError"
-        OnChange="OnUsernameChanged" />
+                        Value="@username"
+                        Placeholder="Enter your name"
+                        ErrorMessage="@usernameError"
+                        OnChange="OnUsernameChanged" />
 
         <InputGroupView Label="Phone Number"
-        Type="tel"
-        Value="@phoneNumber"
-        Placeholder="Enter your phone number"
-        ErrorMessage="@phoneNumberError"
-        OnChange="OnPhoneNumberChanged" />
+                        Type="tel"
+                        Value="@phoneNumber"
+                        Placeholder="Enter your phone number"
+                        ErrorMessage="@phoneNumberError"
+                        OnChange="OnPhoneNumberChanged" />
     </div>
     <div class="flex justify-center">
         <SaveButtonView OnClick="@HandleSave" />
@@ -40,8 +40,18 @@
     private void OnPhoneNumberChanged(ChangeEventArgs e)
     {
         phoneNumber = e.Value?.ToString() ?? "";
-        phoneNumberError = string.IsNullOrEmpty(phoneNumber) ? "Phone number cannot be empty." : "";
-        phoneNumberError = phoneNumber.Length < 9 ? "Invalid phone number." : "";
+        if (string.IsNullOrEmpty(phoneNumber))
+        {
+            phoneNumberError = "Phone number cannot be empty.";
+        }
+        else if (phoneNumber.Length < 9)
+        {
+            phoneNumberError = "Invalid phone number.";
+        }
+        else
+        {
+            phoneNumberError = "";
+        }
     }
 
     private async Task HandleSave()

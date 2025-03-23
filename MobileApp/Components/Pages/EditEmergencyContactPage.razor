@@ -44,8 +44,18 @@
     private void OnPhoneNumberChanged(ChangeEventArgs e)
     {
         phoneNumber = e.Value?.ToString() ?? "";
-        phoneNumberError = phoneNumber.Length < 9 ? "Invalid phone number." : "";
-        phoneNumberError = string.IsNullOrEmpty(phoneNumber) ? "Phone number cannot be empty." : "";
+        if (string.IsNullOrEmpty(phoneNumber))
+        {
+            phoneNumberError = "Phone number cannot be empty.";
+        }
+        else if (phoneNumber.Length < 9)
+        {
+            phoneNumberError = "Invalid phone number.";
+        }
+        else
+        {
+            phoneNumberError = "";
+        }
     }
 
     private async Task HandleSave()
