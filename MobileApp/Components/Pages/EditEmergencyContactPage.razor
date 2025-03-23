@@ -1,5 +1,7 @@
 ﻿@page "/contact/edit"
 
+@inject NavigationManager NavigationManager
+
 <div class="container flex flex-col">
     <div class="text-accent text-2xl font-bold mb-6">
         <h1>Emergency Contact</h1>
@@ -12,7 +14,7 @@
                         OnChange="OnUsernameChanged" />
 
         <InputGroupView Label="Phone Number"
-                        Type="text"
+                        Type="tel"
                         Value="@phoneNumber"
                         Placeholder="Enter contact phone number"
                         ErrorMessage="@phoneNumberError"
@@ -28,8 +30,8 @@
 </div>
 
 @code {
-    private string contactName = "";
-    private string phoneNumber = "";
+    private string contactName = App.EmergencyContact?.ContactName;
+    private string phoneNumber = App.EmergencyContact?.PhoneNumber;
     private string contactNameError = "";
     private string phoneNumberError = "";
 
@@ -42,27 +44,29 @@
     private void OnPhoneNumberChanged(ChangeEventArgs e)
     {
         phoneNumber = e.Value?.ToString() ?? "";
+        phoneNumberError = phoneNumber.Length < 9 ? "Invalid phone number." : "";
         phoneNumberError = string.IsNullOrEmpty(phoneNumber) ? "Phone number cannot be empty." : "";
     }
 
     private async Task HandleSave()
     {
-        if (string.IsNullOrEmpty(contactName))
+        if (string.IsNullOrEmpty(contactNameError) && string.IsNullOrEmpty(phoneNumberError))
         {
-            contactNameError = "Username cannot be empty.";
-        }
-        if (string.IsNullOrEmpty(phoneNumber))
-        {
-            phoneNumberError = "Phone number cannot be empty.";
-        }
-        if (!string.IsNullOrEmpty(contactName) && !string.IsNullOrEmpty(phoneNumber))
-        {
-            // Save the data
+            Preferences.Set("contact_name", contactName);
+            Preferences.Set("contact_phone_number", phoneNumber);
+
+            await LoadContactsData(contactName, phoneNumber);
+            NavigationManager.NavigateTo("/contact");
         }
     }
 
     private async Task HandleCancel()
     {
         // Back to contact page
+    }
+
+    private async Task LoadContactsData(string name, string phone)
+    {
+        App.LoadContactsData(name, phone);
     }
 }

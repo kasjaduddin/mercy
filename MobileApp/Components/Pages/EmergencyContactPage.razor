@@ -14,6 +14,9 @@
 </div>
 
 @code {
+    private string contactName = "";
+    private string phoneNumber = "";
+
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         await base.SetParametersAsync(parameters);
@@ -21,9 +24,6 @@
         if (string.IsNullOrEmpty(App.EmergencyContact?.ContactName))
             NavigationManager.NavigateTo("/contact/edit");
     }
-
-    private string contactName = "";
-    private string phoneNumber = "";
 
     private async Task HandleEdit()
     {
