@@ -14,8 +14,8 @@
 </div>
 
 @code {
-    private string contactName = "";
-    private string phoneNumber = "";
+    private string contactName = App.EmergencyContact.ContactName;
+    private string phoneNumber = App.EmergencyContact.PhoneNumber;
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
