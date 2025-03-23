@@ -1,5 +1,7 @@
 ﻿@page "/"
 
+@inject NavigationManager NavigationManager
+
 <div class="container">
     <div class="mb-1">
         <h1 class="text-accent font-extrabold text-2xl">Hello, @userName</h1>
@@ -7,9 +9,9 @@
     </div>
     <div>
         <HeartStatusCardView HexColor="@statusHexColor"
-                             Status="@heartStatus"
-                             Information="@information"
-                             ImageSource="@statusIconSource" />
+        Status="@heartStatus"
+        Information="@information"
+        ImageSource="@statusIconSource" />
     </div>
 
     <div class="grid grid-cols-2 gap-3 my-3">
@@ -21,7 +23,8 @@
         </HealthMonitorCardView>
         <HealthMonitorCardView HexColor="@thirdHexColor" ImageSource="@heartbeatIconSource" Label="@thirdLabel">
             @* Heartbeat Graph *@
-        </HealthMonitorCardView><HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="@heartRateLabelSize">
+        </HealthMonitorCardView>
+        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="@heartRateLabelSize">
             @* Heart Rate *@
         </HealthMonitorCardView>
     </div>
@@ -31,7 +34,15 @@
 </div>
 
 @code {
-    private string userName = "";
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+
+        if (string.IsNullOrEmpty(App.CurrentUser?.Username))
+            NavigationManager.NavigateTo("/signup");
+    }
+
+    private string? userName = App.CurrentUser?.Username;
     private string greeting = "";
 
     private string statusHexColor = "#B9FBC0";

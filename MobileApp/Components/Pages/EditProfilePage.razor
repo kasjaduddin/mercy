@@ -1,5 +1,7 @@
 ﻿@page "/profile/edit"
 
+@inject NavigationManager NavigationManager
+
 <div class="container flex flex-col">
     <div>
         <ProfilePictureView />
@@ -12,7 +14,7 @@
                         OnChange="OnUsernameChanged" />
 
         <InputGroupView Label="Phone Number"
-                        Type="text"
+                        Type="tel"
                         Value="@phoneNumber"
                         Placeholder="Enter your phone number"
                         ErrorMessage="@phoneNumberError"
@@ -25,8 +27,8 @@
 </div>
 
 @code {
-    private string username = "";
-    private string phoneNumber = "";
+    private string username = App.CurrentUser.Username;
+    private string phoneNumber = App.CurrentUser.PhoneNumber;
     private string usernameError = "";
     private string phoneNumberError = "";
 
@@ -40,26 +42,28 @@
     {
         phoneNumber = e.Value?.ToString() ?? "";
         phoneNumberError = string.IsNullOrEmpty(phoneNumber) ? "Phone number cannot be empty." : "";
+        phoneNumberError = phoneNumber.Length < 9 ? "Invalid phone number." : "";
     }
 
     private async Task HandleSave()
     {
-        if (string.IsNullOrEmpty(username))
+        if (string.IsNullOrEmpty(usernameError) && string.IsNullOrEmpty(phoneNumberError))
         {
-            usernameError = "Username cannot be empty.";
-        }
-        if (string.IsNullOrEmpty(phoneNumber))
-        {
-            phoneNumberError = "Phone number cannot be empty.";
-        }
-        if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(phoneNumber))
-        {
-            // Save the data
+            Preferences.Set("username", username);
+            Preferences.Set("user_phone_number", phoneNumber);
+
+            await LoadUserData(username, phoneNumber);
+            NavigationManager.NavigateTo("/profile");
         }
     }
 
     private async Task HandleCancel()
     {
-        // Back to profile page
+        NavigationManager.NavigateTo("/profile");
+    }
+
+    private async Task LoadUserData(string name, string phone)
+    {
+        App.LoadUserData(name, phone);
     }
 }

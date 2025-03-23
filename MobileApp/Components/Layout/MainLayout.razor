@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
+@inject NavigationManager NavigationManager
+
 <div class="page px-8 mt-2">
     <main>
         <article class="content">
@@ -8,7 +10,14 @@
     </main>
     <footer>
         <div>
-            <NavMenu />
+            @if (!IsSignUpPage)
+            {
+                <NavMenu />
+            }
         </div>
     </footer>
 </div>
+
+@code {
+    private bool IsSignUpPage => NavigationManager.Uri.Contains("/signup");
+}
