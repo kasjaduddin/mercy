@@ -1,5 +1,7 @@
 ﻿@page "/contact"
 
+@inject NavigationManager NavigationManager
+
 <div class="container flex flex-col">
     <div class="text-accent text-2xl font-bold mb-6">
         <h1>Emergency Contact</h1>
@@ -12,11 +14,19 @@
 </div>
 
 @code {
-    private string contactName = "";
-    private string phoneNumber = "";
+    private string contactName = App.EmergencyContact.ContactName;
+    private string phoneNumber = App.EmergencyContact.PhoneNumber;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+
+        if (string.IsNullOrEmpty(App.EmergencyContact?.ContactName))
+            NavigationManager.NavigateTo("/contact/edit");
+    }
 
     private async Task HandleEdit()
     {
-        // Open edit emergency contact page
+        NavigationManager.NavigateTo("/contact/edit");
     }
 }

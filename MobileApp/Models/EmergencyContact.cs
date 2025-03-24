@@ -1,0 +1,31 @@
+﻿namespace MobileApp.Models
+{
+    public class EmergencyContact
+    {
+        private string _contactname;
+        private string _phoneNumber;
+
+        public string ContactName
+        {
+            get => _contactname;
+            set => _contactname = value;
+        }
+        public string PhoneNumber
+        {
+            get => _phoneNumber;
+            set => _phoneNumber = value;
+        }
+
+        public EmergencyContact()
+        {
+            _contactname = String.Empty;
+            _phoneNumber = String.Empty;
+        }
+
+        public EmergencyContact(string contactname, string phoneNumber)
+        {
+            _contactname = contactname;
+            _phoneNumber = phoneNumber;
+        }
+    }
+}

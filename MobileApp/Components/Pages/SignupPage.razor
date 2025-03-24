@@ -1,5 +1,7 @@
 ﻿@page "/signup"
 
+@inject NavigationManager NavigationManager
+
 <div class="container mt-44">
     <div class="text-accent text-center text-2xl font-bold mb-4">
         <h1>Welcome to MERCy-Mobile!</h1>
@@ -12,7 +14,7 @@
                         OnChange="OnUsernameChanged" />
 
         <InputGroupView Label="Phone Number"
-                        Type="text"
+                        Type="tel"
                         Value="@phoneNumber"
                         Placeholder="Enter your phone number"
                         ErrorMessage="@phoneNumberError"
@@ -38,22 +40,34 @@
     private void OnPhoneNumberChanged(ChangeEventArgs e)
     {
         phoneNumber = e.Value?.ToString() ?? "";
-        phoneNumberError = string.IsNullOrEmpty(phoneNumber) ? "Phone number cannot be empty." : "";
-    }
-
-    private async Task HandleSave()
-    {
-        if (string.IsNullOrEmpty(username))
-        {
-            usernameError = "Username cannot be empty.";
-        }
         if (string.IsNullOrEmpty(phoneNumber))
         {
             phoneNumberError = "Phone number cannot be empty.";
         }
-        if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(phoneNumber))
+        else if (phoneNumber.Length < 9)
         {
-            // Save the data
+            phoneNumberError = "Invalid phone number.";
         }
+        else
+        {
+            phoneNumberError = "";
+        }
+    }
+
+    private async Task HandleSave()
+    {
+        if (string.IsNullOrEmpty(usernameError) && string.IsNullOrEmpty(phoneNumberError))
+        {
+            Preferences.Set("username", username);
+            Preferences.Set("user_phone_number", phoneNumber);
+
+            await LoadUserData(username, phoneNumber);
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private async Task LoadUserData(string name,string phone)
+    {
+        App.LoadUserData(name, phone);
     }
 }
