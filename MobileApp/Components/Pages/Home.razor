@@ -72,11 +72,34 @@
 
         if (string.IsNullOrEmpty(App.CurrentUser?.Username))
             NavigationManager.NavigateTo("/signup");
+
+        await GetTime();
     }
 
     private async Task GetTime()
     {
-        DateTime today = new DateTime();
+        int hour = new DateTime().Hour;
 
+        await SetGreeting(hour);
+    }
+
+    private async Task SetGreeting(int hour)
+    {
+        if (hour < 12)
+        {
+            greeting = "Good Morning";
+        }
+        else if (hour < 19)
+        {
+            greeting = "Good Afternoon";
+        }
+        else if (hour < 24)
+        {
+            greeting = "Good Evening";
+        }
+        else
+        {
+            greeting = String.Empty;
+        }
     }
 }
