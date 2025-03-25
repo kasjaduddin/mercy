@@ -34,14 +34,6 @@
 </div>
 
 @code {
-    public override async Task SetParametersAsync(ParameterView parameters)
-    {
-        await base.SetParametersAsync(parameters);
-
-        if (string.IsNullOrEmpty(App.CurrentUser?.Username))
-            NavigationManager.NavigateTo("/signup");
-    }
-
     private string? userName = App.CurrentUser?.Username;
     private string greeting = "";
 
@@ -73,4 +65,41 @@
     private string heartRateLabelSize = "xl";
 
     private string? emergencyContactName = App.EmergencyContact?.ContactName;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+
+        if (string.IsNullOrEmpty(App.CurrentUser?.Username))
+            NavigationManager.NavigateTo("/signup");
+
+        await GetTime();
+    }
+
+    private async Task GetTime()
+    {
+        int hour = new DateTime().Hour;
+
+        await SetGreeting(hour);
+    }
+
+    private async Task SetGreeting(int hour)
+    {
+        if (hour < 12)
+        {
+            greeting = "Good Morning";
+        }
+        else if (hour < 19)
+        {
+            greeting = "Good Afternoon";
+        }
+        else if (hour < 24)
+        {
+            greeting = "Good Evening";
+        }
+        else
+        {
+            greeting = String.Empty;
+        }
+    }
 }
