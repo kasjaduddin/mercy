@@ -1,18 +1,18 @@
 ﻿@inject NavigationManager NavigationManager
 
-<div class="fixed h-22 bottom-0 left-0 right-0 bg-primary-dark px-8 border-t border-gray-200">
+<div class="fixed h-20 bottom-0 left-0 right-0 bg-primary-dark px-8 border-t border-gray-200">
     <div class="grid grid-cols-3 gap-6 items-center">
         <NavLink href="@HomeUrl" Match="NavLinkMatch.All">
             @if (CurrentUrl.EndsWith(HomeUrl))
             {
                     <div class="w-full border-t-4 border-secondary justify-items-center pt-4">
-                        <img src="../resources/images/home_icon_active.svg" alt="Home Opened">
+                        <img class="w-8 h-auto" src="../resources/images/home_icon_active.svg" alt="Home Opened">
                     </div>
             }
             else
             {
                     <div class="w-full border-t-4 border-transparent justify-items-center pt-4">
-                    <img src="../resources/images/home_icon.svg" alt="Home">
+                        <img class="w-8 h-auto" src="../resources/images/home_icon.svg" alt="Home">
                     </div>
             }
         </NavLink>
@@ -21,13 +21,13 @@
             @if (CurrentUrl.Contains(ContactUrl))
             {
                     <div class="w-full border-t-4 border-secondary justify-items-center pt-4">
-                        <img src="../resources/images/contact_icon_active.svg" alt="Contact Opened">
+                        <img class="w-8 h-auto" src="../resources/images/contact_icon_active.svg" alt="Contact Opened">
                     </div>
             }
             else
             {
                     <div class="w-full border-t-4 border-transparent justify-items-center pt-4">
-                        <img src="../resources/images/contact_icon.svg" alt="Contact">
+                        <img class="w-8 h-auto" src="../resources/images/contact_icon.svg" alt="Contact">
                     </div>
             }
         </NavLink>
@@ -36,13 +36,13 @@
             @if (CurrentUrl.Contains(ProfileUrl))
             {
                     <div class="w-full border-t-4 border-secondary justify-items-center pt-4">
-                        <img src="../resources/images/profile_icon_active.svg" alt="Profile Opened">
+                        <img class="w-8 h-auto" src="../resources/images/profile_icon_active.svg" alt="Profile Opened">
                     </div>
             }
             else
             {
                     <div class="w-full border-t-4 border-transparent justify-items-center pt-4">
-                        <img src="../resources/images/profile_icon.svg" alt="Profile">
+                        <img class="w-8 h-auto" src="../resources/images/profile_icon.svg" alt="Profile">
                     </div>
             }
         </NavLink>
