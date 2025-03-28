@@ -18,13 +18,13 @@
         <HealthMonitorCardView HexColor="@firstHexColor" ImageSource="@heartbeatIconSource" Label="@firstLabel">
             @* Heartbeat Graph *@
         </HealthMonitorCardView>
-        <HealthMonitorCardView HexColor="@secondHexColor" ImageSource="@heartbeatIconSource" Label="@secondLabel">
+        <HealthMonitorCardView ShowIcon=false HexColor="@secondHexColor" ImageSource="@heartbeatIconSource" Label="@secondLabel">
             @* Heartbeat Graph *@
         </HealthMonitorCardView>
-        <HealthMonitorCardView HexColor="@thirdHexColor" ImageSource="@heartbeatIconSource" Label="@thirdLabel">
+        <HealthMonitorCardView ShowIcon=false HexColor="@thirdHexColor" ImageSource="@heartbeatIconSource" Label="@thirdLabel">
             @* Heartbeat Graph *@
         </HealthMonitorCardView>
-        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="@heartRateLabelSize">
+        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="lg">
             @* Heart Rate *@
         </HealthMonitorCardView>
     </div>
@@ -57,12 +57,10 @@
     private string heartbeatIconSource = $"../resources/images/heartbeat_icon.png";
     private string heartRateIconSource = $"../resources/images/heartbeat_icon.png";
 
-    private string firstLabel = "I";
-    private string secondLabel = "II";
-    private string thirdLabel = "III";
+    private string firstLabel = "Heartbeat";
+    private string secondLabel = "Bluetooth";
+    private string thirdLabel = "Location";
     private string fourthLabel = "Heart Rate";
-
-    private string heartRateLabelSize = "xl";
 
     private string? emergencyContactName = App.EmergencyContact?.ContactName;
 
