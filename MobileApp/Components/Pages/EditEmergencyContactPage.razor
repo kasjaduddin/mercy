@@ -1,5 +1,7 @@
 ﻿@page "/contact/edit"
 
+@inject NavigationManager NavigationManager
+
 <div class="container flex flex-col">
     <div class="text-accent text-2xl font-bold mb-6">
         <h1>Emergency Contact</h1>
@@ -12,7 +14,7 @@
                         OnChange="OnUsernameChanged" />
 
         <InputGroupView Label="Phone Number"
-                        Type="text"
+                        Type="tel"
                         Value="@phoneNumber"
                         Placeholder="Enter contact phone number"
                         ErrorMessage="@phoneNumberError"
@@ -20,13 +22,16 @@
     </div>
     <div class="flex justify-start gap-2">
         <SaveButtonView OnClick="@HandleSave" />
-        <CancelButtonView OnClick="@HandleCancel" />
+        @if (!string.IsNullOrEmpty(App.EmergencyContact?.ContactName))
+        {
+            <CancelButtonView OnClick="@HandleCancel" />
+        }
     </div>
 </div>
 
 @code {
-    private string contactName = "";
-    private string phoneNumber = "";
+    private string contactName = App.EmergencyContact?.ContactName;
+    private string phoneNumber = App.EmergencyContact?.PhoneNumber;
     private string contactNameError = "";
     private string phoneNumberError = "";
 
@@ -39,27 +44,39 @@
     private void OnPhoneNumberChanged(ChangeEventArgs e)
     {
         phoneNumber = e.Value?.ToString() ?? "";
-        phoneNumberError = string.IsNullOrEmpty(phoneNumber) ? "Phone number cannot be empty." : "";
-    }
-
-    private async Task HandleSave()
-    {
-        if (string.IsNullOrEmpty(contactName))
-        {
-            contactNameError = "Username cannot be empty.";
-        }
         if (string.IsNullOrEmpty(phoneNumber))
         {
             phoneNumberError = "Phone number cannot be empty.";
         }
-        if (!string.IsNullOrEmpty(contactName) && !string.IsNullOrEmpty(phoneNumber))
+        else if (phoneNumber.Length < 9)
         {
-            // Save the data
+            phoneNumberError = "Invalid phone number.";
+        }
+        else
+        {
+            phoneNumberError = "";
+        }
+    }
+
+    private async Task HandleSave()
+    {
+        if (string.IsNullOrEmpty(contactNameError) && string.IsNullOrEmpty(phoneNumberError))
+        {
+            Preferences.Set("contact_name", contactName);
+            Preferences.Set("contact_phone_number", phoneNumber);
+
+            await LoadContactsData(contactName, phoneNumber);
+            NavigationManager.NavigateTo("/contact");
         }
     }
 
     private async Task HandleCancel()
     {
-        // Back to contact page
+        NavigationManager.NavigateTo("/contact");
+    }
+
+    private async Task LoadContactsData(string name, string phone)
+    {
+        App.LoadContactsData(name, phone);
     }
 }
