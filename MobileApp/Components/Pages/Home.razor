@@ -71,7 +71,7 @@
         if (string.IsNullOrEmpty(App.CurrentUser?.Username))
             NavigationManager.NavigateTo("/signup");
 
-        await GetTime();
+        await RealtimeLocation.CheckAndRequestLocationPermission();
     }
 
     private async Task GetTime()
@@ -84,6 +84,8 @@
 
     private async Task SetGreeting(int hour)
     {
+        await Task.Delay(0); // No delay needed
+
         if (hour < 12)
         {
             greeting = "Good Morning";
