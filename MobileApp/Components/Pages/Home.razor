@@ -76,7 +76,8 @@
 
     private async Task GetTime()
     {
-        int hour = new DateTime().Hour;
+        DateTime currentDate = DateTime.Now;
+        int hour = currentDate.Hour;
 
         await SetGreeting(hour);
     }
