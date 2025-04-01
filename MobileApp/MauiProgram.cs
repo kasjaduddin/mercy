@@ -18,6 +18,7 @@ namespace MobileApp
 
             builder.Services.AddMauiBlazorWebView();
 
+            builder.Services.AddSingleton<RealtimeLocation>();
             builder.Services.AddScoped<EmergencyCall>();
 
 #if DEBUG
