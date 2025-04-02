@@ -82,6 +82,8 @@
             await RealtimeLocation.GetCurrentLocation();
             currentLocation = RealtimeLocation.CurrentLocation;
 
+            await BluetoothLowEnergy.ConnectToBluetoothDevices();
+
             await GetTime();
         }
     }
