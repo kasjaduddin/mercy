@@ -66,12 +66,16 @@
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        await base.SetParametersAsync(parameters);
-
         if (string.IsNullOrEmpty(App.CurrentUser?.Username))
-            NavigationManager.NavigateTo("/signup");
+        {
+            NavigationManager.NavigateTo("/signup"); Console.WriteLine("Navigating to signup page");
 
-        await RealtimeLocation.CheckAndRequestLocationPermission();
+            await RealtimeLocation.CheckAndRequestLocationPermission();
+        }
+        else
+        {
+            await base.SetParametersAsync(parameters); Console.WriteLine("Setting parameters");
+        }
     }
 
     private async Task GetTime()
