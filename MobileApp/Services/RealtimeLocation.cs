@@ -1,11 +1,17 @@
 ﻿using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Devices.Sensors;
+using MobileApp.Models;
 
 namespace MobileApp.Services
 {
     public class RealtimeLocation
     {
-        public static Location? _lastKnownLocation;
+        private static CurrentLocation? _currentLocation;
+
+        public static CurrentLocation? CurrentLocation
+        {
+            get => _currentLocation;
+        }
 
         public static async Task<PermissionStatus> CheckAndRequestLocationPermission()
         {
@@ -31,17 +37,35 @@ namespace MobileApp.Services
             return status;
         }
 
-        public static async Task GetLastKnownLocation()
+        private static async Task<Location?> GetLastKnownLocation()
         {
+            Location? lastKnownLocation = new Location();
             PermissionStatus status = await CheckAndRequestLocationPermission();
 
             if (status == PermissionStatus.Granted)
             {
-                _lastKnownLocation = await Geolocation.GetLastKnownLocationAsync();
+                lastKnownLocation = await Geolocation.GetLastKnownLocationAsync();
 
-                if (_lastKnownLocation != null)
+                if (lastKnownLocation != null)
                 {
-                    _lastKnownLocation = await Geolocation.GetLocationAsync();
+                    lastKnownLocation = await Geolocation.GetLocationAsync();
+                }
+            }
+
+            return lastKnownLocation;
+        }
+
+        public static async Task GetCurrentLocation()
+        {
+            Location? lastKnownLocation = await GetLastKnownLocation();
+
+            if (lastKnownLocation != null)
+            {
+                IEnumerable<Placemark> placemarks = await Geocoding.GetPlacemarksAsync(lastKnownLocation.Latitude, lastKnownLocation.Longitude);
+                Placemark? placemark = placemarks?.FirstOrDefault();
+                if (placemark != null)
+                {
+                    _currentLocation = new CurrentLocation(placemark);
                 }
             }
         }

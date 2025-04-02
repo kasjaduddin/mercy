@@ -49,6 +49,8 @@
 
     // private string statusIconSource = $"../resources/images/emergency_icon.png";
 
+    private CurrentLocation currentLocation = new CurrentLocation();
+
     private string firstHexColor = "#DBCDF0";
     private string secondHexColor = "#F7D9C4";
     private string thirdHexColor = "#C6DEF1";
@@ -75,6 +77,11 @@
         else
         {
             await base.SetParametersAsync(parameters); Console.WriteLine("Setting parameters");
+
+            await RealtimeLocation.GetCurrentLocation();
+            currentLocation = RealtimeLocation.CurrentLocation;
+
+            await GetTime();
         }
     }
 
