@@ -49,6 +49,8 @@
 
     // private string statusIconSource = $"../resources/images/emergency_icon.png";
 
+    private CurrentLocation currentLocation = new CurrentLocation();
+
     private string firstHexColor = "#DBCDF0";
     private string secondHexColor = "#F7D9C4";
     private string thirdHexColor = "#C6DEF1";
@@ -66,12 +68,21 @@
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
-        await base.SetParametersAsync(parameters);
-
         if (string.IsNullOrEmpty(App.CurrentUser?.Username))
-            NavigationManager.NavigateTo("/signup");
+        {
+            NavigationManager.NavigateTo("/signup"); Console.WriteLine("Navigating to signup page");
 
-        await GetTime();
+            await RealtimeLocation.CheckAndRequestLocationPermission();
+        }
+        else
+        {
+            await base.SetParametersAsync(parameters); Console.WriteLine("Setting parameters");
+
+            await RealtimeLocation.GetCurrentLocation();
+            currentLocation = RealtimeLocation.CurrentLocation;
+
+            await GetTime();
+        }
     }
 
     private async Task GetTime()
@@ -84,6 +95,8 @@
 
     private async Task SetGreeting(int hour)
     {
+        await Task.Delay(0); // No delay needed
+
         if (hour < 12)
         {
             greeting = "Good Morning";
