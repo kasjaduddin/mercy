@@ -18,13 +18,13 @@
         <HealthMonitorCardView HexColor="@firstHexColor" ImageSource="@heartbeatIconSource" Label="@firstLabel">
             @* Heartbeat Graph *@
         </HealthMonitorCardView>
-        <HealthMonitorCardView HexColor="@secondHexColor" ImageSource="@heartbeatIconSource" Label="@secondLabel">
+        <HealthMonitorCardView ShowIcon=false HexColor="@secondHexColor" ImageSource="@heartbeatIconSource" Label="@secondLabel">
             @* Heartbeat Graph *@
         </HealthMonitorCardView>
-        <HealthMonitorCardView HexColor="@thirdHexColor" ImageSource="@heartbeatIconSource" Label="@thirdLabel">
+        <HealthMonitorCardView ShowIcon=false HexColor="@thirdHexColor" ImageSource="@heartbeatIconSource" Label="@thirdLabel">
             @* Heartbeat Graph *@
         </HealthMonitorCardView>
-        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="@heartRateLabelSize">
+        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="lg">
             @* Heart Rate *@
         </HealthMonitorCardView>
     </div>
@@ -34,14 +34,6 @@
 </div>
 
 @code {
-    public override async Task SetParametersAsync(ParameterView parameters)
-    {
-        await base.SetParametersAsync(parameters);
-
-        if (string.IsNullOrEmpty(App.CurrentUser?.Username))
-            NavigationManager.NavigateTo("/signup");
-    }
-
     private string? userName = App.CurrentUser?.Username;
     private string greeting = "";
 
@@ -65,12 +57,50 @@
     private string heartbeatIconSource = $"../resources/images/heartbeat_icon.png";
     private string heartRateIconSource = $"../resources/images/heartbeat_icon.png";
 
-    private string firstLabel = "I";
-    private string secondLabel = "II";
-    private string thirdLabel = "III";
+    private string firstLabel = "Heartbeat";
+    private string secondLabel = "Bluetooth";
+    private string thirdLabel = "Location";
     private string fourthLabel = "Heart Rate";
 
-    private string heartRateLabelSize = "xl";
+    private string? emergencyContactName = App.EmergencyContact?.ContactName;
 
-    private string emergencyContactName = "";
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+
+        if (string.IsNullOrEmpty(App.CurrentUser?.Username))
+            NavigationManager.NavigateTo("/signup");
+
+        await RealtimeLocation.CheckAndRequestLocationPermission();
+    }
+
+    private async Task GetTime()
+    {
+        DateTime currentDate = DateTime.Now;
+        int hour = currentDate.Hour;
+
+        await SetGreeting(hour);
+    }
+
+    private async Task SetGreeting(int hour)
+    {
+        await Task.Delay(0); // No delay needed
+
+        if (hour < 12)
+        {
+            greeting = "Good Morning";
+        }
+        else if (hour < 19)
+        {
+            greeting = "Good Afternoon";
+        }
+        else if (hour < 24)
+        {
+            greeting = "Good Evening";
+        }
+        else
+        {
+            greeting = String.Empty;
+        }
+    }
 }
