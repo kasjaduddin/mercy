@@ -49,7 +49,7 @@
 
     // private string statusIconSource = $"../resources/images/emergency_icon.png";
 
-    private CurrentLocation currentLocation = new CurrentLocation();
+    private CurrentLocation? currentLocation = new CurrentLocation();
 
     private string firstHexColor = "#DBCDF0";
     private string secondHexColor = "#F7D9C4";
@@ -73,6 +73,7 @@
             NavigationManager.NavigateTo("/signup"); Console.WriteLine("Navigating to signup page");
 
             await RealtimeLocation.CheckAndRequestLocationPermission();
+            await BluetoothLowEnergy.CheckAndRequestBluetoothPermission();
         }
         else
         {
