@@ -1,6 +1,5 @@
 ﻿using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
-using System.Threading.Tasks;
 #if ANDROID
 using Android.Content;
 #endif
@@ -12,11 +11,22 @@ namespace MobileApp.Services
         private static BluetoothState state;
         private static IBluetoothLE ble = CrossBluetoothLE.Current;
         private static IAdapter adapter = CrossBluetoothLE.Current.Adapter;
+        private static bool deviceConnected = false;
         private static List<IDevice> deviceList = new List<IDevice>();
 
         public static BluetoothState State
         {
             get => state;
+        }
+
+        public static IBluetoothLE Ble
+        {
+            get => ble;
+        }
+
+        public static bool DeviceConnected
+        {
+            get => deviceConnected;
         }
 
         public static async Task<PermissionStatus> CheckAndRequestBluetoothPermission()
@@ -54,9 +64,9 @@ namespace MobileApp.Services
 
         private static void OpenBluetoothSettings()
         {
-            bool connectedDevices = CheckConnectedDevices();
+            deviceConnected = CheckConnectedDevices();
 #if ANDROID
-            if (state == BluetoothState.On && !connectedDevices)
+            if (state == BluetoothState.On && !deviceConnected)
             {
                 try
                 {

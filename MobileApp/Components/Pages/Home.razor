@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 @inject NavigationManager NavigationManager
+@using Plugin.BLE.Abstractions.Contracts
 
 <div class="container">
     <div class="mb-1">
@@ -19,7 +20,16 @@
             @* Heartbeat Graph *@
         </HealthMonitorCardView>
         <HealthMonitorCardView ShowIcon=false HexColor="@secondHexColor" ImageSource="@heartbeatIconSource" Label="@secondLabel">
-            @* Heartbeat Graph *@
+            <div class="justify-items-center">
+                <div>
+                    <svg class="mt-5 mb-3" width="53" height="72" viewBox="0 0 53 72" fill="@bluetoothIconColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M29.3878 17.7283L35.3242 23.665L29.3913 29.5968L29.3878 17.7283ZM29.3878 54.0691L35.3242 48.1337L29.3913 42.2007L29.3878 54.0691ZM23.0493 35.8988L10.2159 23.0326L13.9357 19.3138L24.1589 29.5419V5.0311L42.7518 23.6224L30.4754 35.8988L42.7541 48.1786L24.1603 66.7703V42.2578L13.9344 52.4872L10.2144 48.7661L23.0493 35.8988ZM26.4875 71.8024C42.1653 71.8024 52.9678 64.3541 52.9678 35.8999C52.9678 7.44683 42.1653 0 26.4875 0C10.8105 0 0.00223923 7.44807 0.00223923 35.8999C0.00223923 64.3544 10.8095 71.8024 26.4875 71.8024Z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-black text-lg">@bluetoothInformationText</p>
+                </div>                
+            </div>
         </HealthMonitorCardView>
         <HealthMonitorCardView ShowIcon=false HexColor="@thirdHexColor" ImageSource="@heartbeatIconSource" Label="@thirdLabel">
             @* Heartbeat Graph *@
@@ -48,6 +58,9 @@
     // private string? information = "Calling Ambulance...";
 
     // private string statusIconSource = $"../resources/images/emergency_icon.png";
+    
+    private string bluetoothIconColor = "none";
+    private string bluetoothInformationText = string.Empty;
 
     private CurrentLocation? currentLocation = new CurrentLocation();
 
@@ -79,27 +92,27 @@
         {
             await base.SetParametersAsync(parameters); Console.WriteLine("Setting parameters");
 
+            GetTime();
+                        
+            await BluetoothLowEnergy.ConnectToBluetoothDevices();
+            ShowBluetoothState();
+
             await RealtimeLocation.GetCurrentLocation();
             currentLocation = RealtimeLocation.CurrentLocation;
 
-            await BluetoothLowEnergy.ConnectToBluetoothDevices();
-
-            await GetTime();
         }
     }
 
-    private async Task GetTime()
+    private void GetTime()
     {
         DateTime currentDate = DateTime.Now;
         int hour = currentDate.Hour;
 
-        await SetGreeting(hour);
+        SetGreeting(hour);
     }
 
-    private async Task SetGreeting(int hour)
+    private void SetGreeting(int hour)
     {
-        await Task.Delay(0); // No delay needed
-
         if (hour < 12)
         {
             greeting = "Good Morning";
@@ -116,5 +129,30 @@
         {
             greeting = String.Empty;
         }
+    }
+
+    private void ShowBluetoothState()
+    {
+        if (BluetoothLowEnergy.State == BluetoothState.On)
+        {
+            bluetoothIconColor = "#0060A9";
+            bluetoothInformationText = BluetoothLowEnergy.DeviceConnected ? "Connected" : "Not Connected";
+        }
+        else if (BluetoothLowEnergy.State == BluetoothState.Off)
+        {
+            bluetoothIconColor = "#C3C3C3";
+            bluetoothInformationText = string.Empty;
+        }
+        else
+        {
+            bluetoothIconColor = "none";
+            bluetoothInformationText = string.Empty;
+        }
+
+        BluetoothLowEnergy.Ble.StateChanged += async (s, e) =>
+        {
+            ShowBluetoothState();
+            await InvokeAsync(StateHasChanged);
+        };
     }
 }
