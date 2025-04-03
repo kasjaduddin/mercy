@@ -32,7 +32,16 @@
             </div>
         </HealthMonitorCardView>
         <HealthMonitorCardView ShowIcon=false HexColor="@thirdHexColor" ImageSource="@heartbeatIconSource" Label="@thirdLabel">
-            @* Heartbeat Graph *@
+            <div class="justify-items-center">
+                <div>
+                    <svg class="mt-2 mb-2" width="64" height="64" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M36 34.5C34.0109 34.5 32.1032 33.7098 30.6967 32.3033C29.2902 30.8968 28.5 28.9891 28.5 27C28.5 25.0109 29.2902 23.1032 30.6967 21.6967C32.1032 20.2902 34.0109 19.5 36 19.5C37.9891 19.5 39.8968 20.2902 41.3033 21.6967C42.7098 23.1032 43.5 25.0109 43.5 27C43.5 27.9849 43.306 28.9602 42.9291 29.8701C42.5522 30.7801 41.9997 31.6069 41.3033 32.3033C40.6069 32.9997 39.7801 33.5522 38.8701 33.9291C37.9602 34.306 36.9849 34.5 36 34.5ZM36 6C30.4305 6 25.089 8.21249 21.1508 12.1508C17.2125 16.089 15 21.4305 15 27C15 42.75 36 66 36 66C36 66 57 42.75 57 27C57 21.4305 54.7875 16.089 50.8492 12.1508C46.911 8.21249 41.5695 6 36 6Z" fill="black" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-black text-xs text-center">@address</p>
+                </div>
+            </div>
         </HealthMonitorCardView>
         <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="lg">
             @* Heart Rate *@
@@ -58,11 +67,12 @@
     // private string? information = "Calling Ambulance...";
 
     // private string statusIconSource = $"../resources/images/emergency_icon.png";
-    
+
     private string bluetoothIconColor = "none";
     private string bluetoothInformationText = string.Empty;
 
     private CurrentLocation? currentLocation = new CurrentLocation();
+    private string address = string.Empty;
 
     private string firstHexColor = "#DBCDF0";
     private string secondHexColor = "#F7D9C4";
@@ -93,13 +103,13 @@
             await base.SetParametersAsync(parameters); Console.WriteLine("Setting parameters");
 
             GetTime();
-                        
+
             await BluetoothLowEnergy.ConnectToBluetoothDevices();
             ShowBluetoothState();
 
             await RealtimeLocation.GetCurrentLocation();
             currentLocation = RealtimeLocation.CurrentLocation;
-
+            await SetAddress();
         }
     }
 
@@ -154,5 +164,12 @@
             ShowBluetoothState();
             await InvokeAsync(StateHasChanged);
         };
+    }
+
+    private async Task SetAddress()
+    {
+        address = $"{currentLocation?.Locality?.Remove(0, 10)}, {currentLocation?.SubAdminArea}, {currentLocation?.AdminArea}";
+        Console.WriteLine($"Address: {address}");
+        await InvokeAsync(StateHasChanged);
     }
 }
