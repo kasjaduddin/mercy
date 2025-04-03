@@ -19,7 +19,6 @@ namespace MobileApp.Services
             get => state;
         }
 
-#if ANDROID
         public static async Task<PermissionStatus> CheckAndRequestBluetoothPermission()
         {
             PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.Bluetooth>();
@@ -55,7 +54,9 @@ namespace MobileApp.Services
 
         private static void OpenBluetoothSettings()
         {
-            if (state == BluetoothState.On && !CheckConnectedDevices())
+            bool connectedDevices = CheckConnectedDevices();
+#if ANDROID
+            if (state == BluetoothState.On && !connectedDevices)
             {
                 try
                 {
@@ -68,6 +69,7 @@ namespace MobileApp.Services
                     Console.WriteLine($"Error opening Bluetooth settings: {ex.Message}");
                 }
             }
+#endif
         }
 
         private static bool CheckConnectedDevices()
@@ -93,6 +95,5 @@ namespace MobileApp.Services
             await GetBluetoothStatus();
             OpenBluetoothSettings();
         }
-#endif
     }
 }
