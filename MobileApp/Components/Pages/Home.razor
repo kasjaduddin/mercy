@@ -43,7 +43,7 @@
                 </div>
             </div>
         </HealthMonitorCardView>
-        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="lg">
+        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartRateIconSource" Label="@fourthLabel" LabelSize="lg">
             @* Heart Rate *@
         </HealthMonitorCardView>
     </div>
@@ -54,38 +54,31 @@
 
 @code {
     private string? userName = App.CurrentUser?.Username;
-    private string greeting = "";
+    private string greeting = string.Empty;
 
-    private string statusHexColor = "#B9FBC0";
-    private string heartStatus = "Healthy Heart";
-    private string? information = "";
-
-    private string statusIconSource = $"../resources/images/healthy_heart_icon.png";
-
-    // private string statusHexColor = "#FBB9B9";
-    // private string heartStatus = "STEMI";
-    // private string? information = "Calling Ambulance...";
-
-    // private string statusIconSource = $"../resources/images/emergency_icon.png";
-
-    private string bluetoothIconColor = "none";
-    private string bluetoothInformationText = string.Empty;
-
-    private CurrentLocation? currentLocation = new CurrentLocation();
-    private string address = string.Empty;
+    private string heartStatus = string.Empty;
+    private string statusHexColor = string.Empty;
+    private string information = string.Empty;
+    private string statusIconSource = string.Empty;
 
     private string firstHexColor = "#DBCDF0";
     private string secondHexColor = "#F7D9C4";
     private string thirdHexColor = "#C6DEF1";
     private string fourthHexColor = "#F2C6DE";
 
-    private string heartbeatIconSource = $"../resources/images/heartbeat_icon.png";
-    private string heartRateIconSource = $"../resources/images/heartbeat_icon.png";
-
     private string firstLabel = "Heartbeat";
     private string secondLabel = "Bluetooth";
     private string thirdLabel = "Location";
     private string fourthLabel = "Heart Rate";
+
+    private string heartbeatIconSource = $"../resources/images/heartbeat_icon.png";
+    private string heartRateIconSource = $"../resources/images/heart_rate_icon.png";
+
+    private string bluetoothIconColor = "none";
+    private string bluetoothInformationText = string.Empty;
+
+    private CurrentLocation? currentLocation = new CurrentLocation();
+    private string address = string.Empty;
 
     private string? emergencyContactName = App.EmergencyContact?.ContactName;
 
@@ -103,6 +96,8 @@
             await base.SetParametersAsync(parameters); Console.WriteLine("Setting parameters");
 
             GetTime();
+
+            await ShowHeartStatus();
 
             await BluetoothLowEnergy.ConnectToBluetoothDevices();
             ShowBluetoothState();
@@ -139,6 +134,31 @@
         {
             greeting = String.Empty;
         }
+    }
+
+    private async Task ShowHeartStatus()
+    {
+        if (heartStatus == "Healthy Heart")
+        {
+            statusHexColor = "#B9FBC0";
+            information = string.Empty;
+            statusIconSource = $"../resources/images/healthy_heart_icon.png";
+        }
+        else if (heartStatus == "STEMI" || heartStatus == "NSTEMI")
+        {
+            statusHexColor = "#FBB9B9";
+            information = "Calling Ambulance...";
+            statusIconSource = $"../resources/images/emergency_icon.png";
+        }
+        else
+        {
+            heartStatus = "Unknown";
+            statusHexColor = "#F4F4F4";
+            information = string.Empty;
+            statusIconSource = $"../resources/images/unknown_icon.png";
+        }
+
+        await InvokeAsync(StateHasChanged);
     }
 
     private void ShowBluetoothState()
