@@ -1,8 +1,6 @@
 ﻿using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
-#if ANDROID
-using Android.Content;
-#endif
+using Plugin.BLE.Abstractions.EventArgs;
 
 namespace MobileApp.Services
 {
@@ -62,48 +60,68 @@ namespace MobileApp.Services
             }
         }
 
-        private static void OpenBluetoothSettings()
-        {
-            deviceConnected = CheckConnectedDevices();
-#if ANDROID
-            if (state == BluetoothState.On && !deviceConnected)
-            {
-                try
-                {
-                    var intent = new Intent(Android.Provider.Settings.ActionBluetoothSettings);
-                    intent.AddFlags(ActivityFlags.NewTask);
-                    Android.App.Application.Context.StartActivity(intent);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error opening Bluetooth settings: {ex.Message}");
-                }
-            }
-#endif
-        }
-
         private static bool CheckConnectedDevices()
         {
-            adapter.DeviceConnected += (s, a) =>
-            {
-                deviceList.Add(a.Device);
-            };
+            adapter.DeviceConnected -= OnDeviceConnected;
+            adapter.DeviceDisconnected -= OnDeviceDisconnected;
 
-            foreach (var device in deviceList)
+            adapter.DeviceConnected += OnDeviceConnected;
+            adapter.DeviceDisconnected += OnDeviceDisconnected;
+
+            return adapter.ConnectedDevices.Any(d => d.Name.Contains("Mercy") || d.Name.Contains("ECG"));
+        }
+
+        private static void OnDeviceConnected(object sender, DeviceEventArgs a)
+        {
+            if (a.Device.Name.Contains("Mercy") || a.Device.Name.Contains("ECG"))
             {
-                if (device.Name.Contains("Mercy"))
+                deviceConnected = true;
+                Console.WriteLine($"Device connected: {a.Device.Name}");
+            }
+        }
+
+        private static void OnDeviceDisconnected(object sender, DeviceEventArgs a)
+        {
+            if (a.Device.Name.Contains("Mercy") || a.Device.Name.Contains("ECG"))
+            {
+                deviceConnected = false;
+                Console.WriteLine($"Device disconnected: {a.Device.Name}");
+            }
+        }
+
+        private static async Task ScanForDevices()
+        {
+            if (state == BluetoothState.On)
+            {
+                deviceConnected = CheckConnectedDevices();
+
+                if (!deviceConnected)
                 {
-                    return true;
+                    Console.WriteLine("Scanning for Bluetooth devices...");
+
+                    deviceList.Clear();
+
+                    adapter.DeviceDiscovered -= OnDeviceDiscovered;
+                    adapter.DeviceDiscovered += OnDeviceDiscovered;
+
+                    await adapter.StartScanningForDevicesAsync();
                 }
             }
+        }
 
-            return false;
+        private static void OnDeviceDiscovered(object sender, DeviceEventArgs e)
+        {
+            if (!deviceList.Contains(e.Device) && (e.Device.Name?.Contains("Mercy") == true || e.Device.Name?.Contains("ECG") == true))
+            {
+                deviceList.Add(e.Device);
+                Console.WriteLine($"Device discovered: {e.Device.Name} ({e.Device.Id})");
+            }
         }
 
         public static async Task ConnectToBluetoothDevices()
         {
             await GetBluetoothStatus();
-            OpenBluetoothSettings();
+            ScanForDevices();
         }
     }
 }
