@@ -1,6 +1,7 @@
 ﻿using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
+using Plugin.BLE.Abstractions.Exceptions;
 
 namespace MobileApp.Services
 {
@@ -86,6 +87,7 @@ namespace MobileApp.Services
             {
                 deviceConnected = false;
                 Console.WriteLine($"Device disconnected: {a.Device.Name}");
+                ConnectToBluetoothDevices();
             }
         }
 
@@ -121,7 +123,44 @@ namespace MobileApp.Services
         public static async Task ConnectToBluetoothDevices()
         {
             await GetBluetoothStatus();
-            ScanForDevices();
+
+            if (!deviceConnected)
+            {
+                Console.WriteLine("No devices connected. Attempting to connect...");
+                await ScanForDevices();
+
+                foreach (var device in deviceList)
+                {
+                    if (device.Name.Contains("Mercy") || device.Name.Contains("ECG"))
+                    {
+                        try
+                        {
+                            Console.WriteLine($"Attempting connection to: {device.Name} ({device.Id})");
+
+                            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+
+                            await adapter.ConnectToDeviceAsync(device, cancellationToken: cts.Token);
+
+                            deviceConnected = CheckConnectedDevices();
+                            Console.WriteLine($"Connection status: {deviceConnected}");
+
+                            if (deviceConnected)
+                            {
+                                Console.WriteLine($"Successfully connected to: {device.Name}");
+                                break;
+                            }
+                        }
+                        catch (DeviceConnectionException ex)
+                        {
+                            Console.WriteLine($"Error connecting to device: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Already connected to a device.");
+            }
         }
     }
 }
