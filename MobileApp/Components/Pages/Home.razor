@@ -1,7 +1,6 @@
 ﻿@page "/"
 
 @inject NavigationManager NavigationManager
-@using Plugin.BLE.Abstractions.Contracts
 
 <div class="container">
     <div class="mb-1">
@@ -93,22 +92,19 @@
         }
         else
         {
-            await base.SetParametersAsync(parameters); Console.WriteLine("Setting parameters");
+            await base.SetParametersAsync(parameters);
 
             GetTime();
 
             await ShowHeartStatus();
 
-            await BluetoothLowEnergy.ConnectToBluetoothDevices();
             ShowBluetoothState();
 
-            await RealtimeLocation.GetCurrentLocation();
-            currentLocation = RealtimeLocation.CurrentLocation;
             await SetAddress();
         }
     }
 
-    private void GetTime()
+    private async void GetTime()
     {
         DateTime currentDate = DateTime.Now;
         int hour = currentDate.Hour;
@@ -161,11 +157,15 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    private void ShowBluetoothState()
+    public async Task ShowBluetoothState()
     {
+        await BluetoothLowEnergy.GetBluetoothStatus();
+
         if (BluetoothLowEnergy.State == BluetoothState.On)
         {
             bluetoothIconColor = "#0060A9";
+
+            await BluetoothLowEnergy.ConnectToBluetoothDevices();
             bluetoothInformationText = BluetoothLowEnergy.DeviceConnected ? "Connected" : "Not Connected";
         }
         else if (BluetoothLowEnergy.State == BluetoothState.Off)
@@ -179,17 +179,37 @@
             bluetoothInformationText = string.Empty;
         }
 
-        BluetoothLowEnergy.Ble.StateChanged += async (s, e) =>
+        BluetoothLowEnergy.Ble.StateChanged -= OnBluetoothStateChanged;
+        BluetoothLowEnergy.Ble.StateChanged += OnBluetoothStateChanged;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void OnBluetoothStateChanged(object sender, BluetoothStateChangedArgs e)
+    {
+        bluetoothIconColor = e.NewState == BluetoothState.On ? "#0060A9" : "#C3C3C3";
+        InvokeAsync(StateHasChanged);
+
+        if (e.NewState == BluetoothState.On)
         {
-            ShowBluetoothState();
-            await InvokeAsync(StateHasChanged);
-        };
+            await BluetoothLowEnergy.ConnectToBluetoothDevices();
+            bluetoothInformationText = BluetoothLowEnergy.DeviceConnected ? "Connected" : "Not Connected";
+        }
+        else
+        {
+            bluetoothInformationText = string.Empty;
+        }
+        InvokeAsync(StateHasChanged);
     }
 
     private async Task SetAddress()
     {
+        await RealtimeLocation.GetCurrentLocation();
+
+        currentLocation = RealtimeLocation.CurrentLocation;
         address = $"{currentLocation?.Locality?.Remove(0, 10)}, {currentLocation?.SubAdminArea}, {currentLocation?.AdminArea}";
         Console.WriteLine($"Address: {address}");
+
         await InvokeAsync(StateHasChanged);
     }
 }

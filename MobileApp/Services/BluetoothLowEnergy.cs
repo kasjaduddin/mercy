@@ -1,4 +1,5 @@
-﻿using Plugin.BLE;
+﻿using MobileApp.Components.Pages;
+using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
 using Plugin.BLE.Abstractions.Exceptions;
@@ -23,6 +24,11 @@ namespace MobileApp.Services
             get => ble;
         }
 
+        public static IAdapter Adapter
+        {
+            get => adapter;
+        }
+
         public static bool DeviceConnected
         {
             get => deviceConnected;
@@ -45,19 +51,26 @@ namespace MobileApp.Services
             return status;
         }
 
-        private static async Task GetBluetoothStatus()
+        public static async Task GetBluetoothStatus()
         {
             PermissionStatus status = await CheckAndRequestBluetoothPermission();
-            
+
             if (status == PermissionStatus.Granted)
             {
                 state = ble.State;
-                
-                ble.StateChanged += async (s, e) =>
-                {
-                    Console.WriteLine($"The bluetooth state changed to {e.NewState}");
-                    await ConnectToBluetoothDevices();
-                };
+
+                ble.StateChanged -= OnBluetoothStateChanged;
+                ble.StateChanged += OnBluetoothStateChanged;
+            }
+        }
+
+        private static async void OnBluetoothStateChanged(object sender, BluetoothStateChangedArgs e)
+        {
+            Console.WriteLine($"The Bluetooth state changed to {e.NewState}");
+
+            if (e.NewState == BluetoothState.On)
+            {
+                await ConnectToBluetoothDevices();
             }
         }
 
@@ -122,8 +135,6 @@ namespace MobileApp.Services
 
         public static async Task ConnectToBluetoothDevices()
         {
-            await GetBluetoothStatus();
-
             if (!deviceConnected)
             {
                 Console.WriteLine("No devices connected. Attempting to connect...");
