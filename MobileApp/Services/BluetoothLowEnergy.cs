@@ -1,5 +1,4 @@
-﻿using MobileApp.Components.Pages;
-using Plugin.BLE;
+﻿using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
 using Plugin.BLE.Abstractions.Exceptions;
@@ -165,7 +164,6 @@ namespace MobileApp.Services
                             {
                                 Console.WriteLine($"Successfully connected to: {device.Name}");
                                 StartBackgroundSubscription(device);
-                                Console.WriteLine("Break connect");
                                 break;
                             }
                         }
@@ -187,9 +185,15 @@ namespace MobileApp.Services
         {
             Task.Run(async () =>
             {
-                Console.WriteLine("Starting background subscription for notifications...");
-                await SubscribeToNotificationsAsync(device);
-                Console.WriteLine("Background subscription completed.");
+                try
+                {
+                    Console.WriteLine("Starting background subscription...");
+                    await SubscribeToNotificationsAsync(device);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error in background subscription: {ex.Message}");
+                }
             });
         }
 
