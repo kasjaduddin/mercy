@@ -164,8 +164,6 @@
         if (BluetoothLowEnergy.State == BluetoothState.On)
         {
             bluetoothIconColor = "#0060A9";
-
-            await BluetoothLowEnergy.ConnectToBluetoothDevices();
             bluetoothInformationText = BluetoothLowEnergy.DeviceConnected ? "Connected" : "Not Connected";
         }
         else if (BluetoothLowEnergy.State == BluetoothState.Off)
@@ -182,6 +180,12 @@
         BluetoothLowEnergy.Ble.StateChanged -= OnBluetoothStateChanged;
         BluetoothLowEnergy.Ble.StateChanged += OnBluetoothStateChanged;
 
+        BluetoothLowEnergy.Adapter.DeviceConnected -= OnDeviceConnected;
+        BluetoothLowEnergy.Adapter.DeviceDisconnected -= OnDeviceDisconnected;
+
+        BluetoothLowEnergy.Adapter.DeviceConnected += OnDeviceConnected;
+        BluetoothLowEnergy.Adapter.DeviceDisconnected += OnDeviceDisconnected;
+
         await InvokeAsync(StateHasChanged);
     }
 
@@ -192,14 +196,31 @@
 
         if (e.NewState == BluetoothState.On)
         {
-            await BluetoothLowEnergy.ConnectToBluetoothDevices();
             bluetoothInformationText = BluetoothLowEnergy.DeviceConnected ? "Connected" : "Not Connected";
         }
         else
         {
             bluetoothInformationText = string.Empty;
         }
-        InvokeAsync(StateHasChanged);
+        
+    }
+
+    private async void OnDeviceConnected(object sender, DeviceEventArgs a)
+    {
+        if (a.Device.Name.Contains("Mercy") || a.Device.Name.Contains("ECG"))
+        {
+            bluetoothInformationText = "Connected";
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async void OnDeviceDisconnected(object sender, DeviceEventArgs a)
+    {
+        if (a.Device.Name.Contains("Mercy") || a.Device.Name.Contains("ECG"))
+        {
+            bluetoothInformationText = BluetoothLowEnergy.State == BluetoothState.On ? "Not Connected" : string.Empty;
+            InvokeAsync(StateHasChanged);
+        }
     }
 
     private async Task SetAddress()

@@ -61,6 +61,12 @@ namespace MobileApp.Services
 
                 ble.StateChanged -= OnBluetoothStateChanged;
                 ble.StateChanged += OnBluetoothStateChanged;
+
+                if (state == BluetoothState.On)
+                {
+                    Console.WriteLine("Bluetooth is ON");
+                    ConnectToBluetoothDevices();
+                }
             }
         }
 
@@ -164,6 +170,7 @@ namespace MobileApp.Services
                         catch (DeviceConnectionException ex)
                         {
                             Console.WriteLine($"Error connecting to device: {ex.Message}");
+                            ConnectToBluetoothDevices();
                         }
                     }
                 }
