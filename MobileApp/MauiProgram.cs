@@ -18,6 +18,8 @@ namespace MobileApp
 
             builder.Services.AddMauiBlazorWebView();
 
+            builder.Services.AddSingleton<RealtimeLocation>();
+            builder.Services.AddSingleton<BluetoothLowEnergy>();
             builder.Services.AddScoped<EmergencyCall>();
 
 #if DEBUG

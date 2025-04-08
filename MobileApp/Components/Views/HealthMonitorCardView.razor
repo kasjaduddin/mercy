@@ -1,6 +1,9 @@
-﻿<div class="w-full h-52 bg-[@HexColor] rounded-md p-3 shadow-sm">
-    <div class="flex items-center">
-        <img class="h-auto w-auto object-cover" src="@ImageSource" alt="Heartbeat Icon" />
+﻿<div class="w-full h-44 bg-[@HexColor] rounded-md pt-2 shadow-sm">
+    <div class="flex items-center justify-center">
+        @if (ShowIcon)
+        {
+            <img class="w-8 h-auto object-cover me-1" src="@ImageSource" alt="Heartbeat Icon" />
+        }
         <h1 class="text-secondary font-extrabold text-@LabelSize">@Label</h1>
     </div>
 
@@ -11,6 +14,9 @@
 
 @code {
     [Parameter]
+    public bool ShowIcon { get; set; } = true;
+
+    [Parameter]
     public string HexColor { get; set; } = "";
 
     [Parameter]
@@ -20,7 +26,7 @@
     public string Label { get; set; } = "";
 
     [Parameter]
-    public string LabelSize { get; set; } = "3xl";
+    public string LabelSize { get; set; } = "xl";
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }

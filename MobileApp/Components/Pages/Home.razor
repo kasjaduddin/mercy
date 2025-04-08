@@ -18,13 +18,31 @@
         <HealthMonitorCardView HexColor="@firstHexColor" ImageSource="@heartbeatIconSource" Label="@firstLabel">
             @* Heartbeat Graph *@
         </HealthMonitorCardView>
-        <HealthMonitorCardView HexColor="@secondHexColor" ImageSource="@heartbeatIconSource" Label="@secondLabel">
-            @* Heartbeat Graph *@
+        <HealthMonitorCardView ShowIcon=false HexColor="@secondHexColor" ImageSource="@heartbeatIconSource" Label="@secondLabel">
+            <div class="justify-items-center">
+                <div>
+                    <svg class="mt-5 mb-3" width="53" height="72" viewBox="0 0 53 72" fill="@bluetoothIconColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M29.3878 17.7283L35.3242 23.665L29.3913 29.5968L29.3878 17.7283ZM29.3878 54.0691L35.3242 48.1337L29.3913 42.2007L29.3878 54.0691ZM23.0493 35.8988L10.2159 23.0326L13.9357 19.3138L24.1589 29.5419V5.0311L42.7518 23.6224L30.4754 35.8988L42.7541 48.1786L24.1603 66.7703V42.2578L13.9344 52.4872L10.2144 48.7661L23.0493 35.8988ZM26.4875 71.8024C42.1653 71.8024 52.9678 64.3541 52.9678 35.8999C52.9678 7.44683 42.1653 0 26.4875 0C10.8105 0 0.00223923 7.44807 0.00223923 35.8999C0.00223923 64.3544 10.8095 71.8024 26.4875 71.8024Z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-black text-lg">@bluetoothInformationText</p>
+                </div>                
+            </div>
         </HealthMonitorCardView>
-        <HealthMonitorCardView HexColor="@thirdHexColor" ImageSource="@heartbeatIconSource" Label="@thirdLabel">
-            @* Heartbeat Graph *@
+        <HealthMonitorCardView ShowIcon=false HexColor="@thirdHexColor" ImageSource="@heartbeatIconSource" Label="@thirdLabel">
+            <div class="justify-items-center">
+                <div>
+                    <svg class="mt-2 mb-2" width="64" height="64" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M36 34.5C34.0109 34.5 32.1032 33.7098 30.6967 32.3033C29.2902 30.8968 28.5 28.9891 28.5 27C28.5 25.0109 29.2902 23.1032 30.6967 21.6967C32.1032 20.2902 34.0109 19.5 36 19.5C37.9891 19.5 39.8968 20.2902 41.3033 21.6967C42.7098 23.1032 43.5 25.0109 43.5 27C43.5 27.9849 43.306 28.9602 42.9291 29.8701C42.5522 30.7801 41.9997 31.6069 41.3033 32.3033C40.6069 32.9997 39.7801 33.5522 38.8701 33.9291C37.9602 34.306 36.9849 34.5 36 34.5ZM36 6C30.4305 6 25.089 8.21249 21.1508 12.1508C17.2125 16.089 15 21.4305 15 27C15 42.75 36 66 36 66C36 66 57 42.75 57 27C57 21.4305 54.7875 16.089 50.8492 12.1508C46.911 8.21249 41.5695 6 36 6Z" fill="black" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-black text-xs text-center">@address</p>
+                </div>
+            </div>
         </HealthMonitorCardView>
-        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="@heartRateLabelSize">
+        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartRateIconSource" Label="@fourthLabel" LabelSize="lg">
             @* Heart Rate *@
         </HealthMonitorCardView>
     </div>
@@ -34,43 +52,185 @@
 </div>
 
 @code {
-    public override async Task SetParametersAsync(ParameterView parameters)
-    {
-        await base.SetParametersAsync(parameters);
-
-        if (string.IsNullOrEmpty(App.CurrentUser?.Username))
-            NavigationManager.NavigateTo("/signup");
-    }
-
     private string? userName = App.CurrentUser?.Username;
-    private string greeting = "";
+    private string greeting = string.Empty;
 
-    private string statusHexColor = "#B9FBC0";
-    private string heartStatus = "Healthy Heart";
-    private string? information = "";
-
-    private string statusIconSource = $"../resources/images/healthy_heart_icon.png";
-
-    // private string statusHexColor = "#FBB9B9";
-    // private string heartStatus = "STEMI";
-    // private string? information = "Calling Ambulance...";
-
-    // private string statusIconSource = $"../resources/images/emergency_icon.png";
+    private string heartStatus = string.Empty;
+    private string statusHexColor = string.Empty;
+    private string information = string.Empty;
+    private string statusIconSource = string.Empty;
 
     private string firstHexColor = "#DBCDF0";
     private string secondHexColor = "#F7D9C4";
     private string thirdHexColor = "#C6DEF1";
     private string fourthHexColor = "#F2C6DE";
 
-    private string heartbeatIconSource = $"../resources/images/heartbeat_icon.png";
-    private string heartRateIconSource = $"../resources/images/heartbeat_icon.png";
-
-    private string firstLabel = "I";
-    private string secondLabel = "II";
-    private string thirdLabel = "III";
+    private string firstLabel = "Heartbeat";
+    private string secondLabel = "Bluetooth";
+    private string thirdLabel = "Location";
     private string fourthLabel = "Heart Rate";
 
-    private string heartRateLabelSize = "xl";
+    private string heartbeatIconSource = $"../resources/images/heartbeat_icon.png";
+    private string heartRateIconSource = $"../resources/images/heart_rate_icon.png";
+
+    private string bluetoothIconColor = "none";
+    private string bluetoothInformationText = string.Empty;
+
+    private CurrentLocation? currentLocation = new CurrentLocation();
+    private string address = string.Empty;
 
     private string? emergencyContactName = App.EmergencyContact?.ContactName;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        if (string.IsNullOrEmpty(App.CurrentUser?.Username))
+        {
+            NavigationManager.NavigateTo("/signup"); Console.WriteLine("Navigating to signup page");
+
+            await RealtimeLocation.CheckAndRequestLocationPermission();
+            await BluetoothLowEnergy.CheckAndRequestBluetoothPermission();
+        }
+        else
+        {
+            await base.SetParametersAsync(parameters);
+
+            GetTime();
+
+            await ShowHeartStatus();
+
+            ShowBluetoothState();
+
+            await SetAddress();
+        }
+    }
+
+    private async void GetTime()
+    {
+        DateTime currentDate = DateTime.Now;
+        int hour = currentDate.Hour;
+
+        SetGreeting(hour);
+    }
+
+    private void SetGreeting(int hour)
+    {
+        if (hour < 12)
+        {
+            greeting = "Good Morning";
+        }
+        else if (hour < 19)
+        {
+            greeting = "Good Afternoon";
+        }
+        else if (hour < 24)
+        {
+            greeting = "Good Evening";
+        }
+        else
+        {
+            greeting = String.Empty;
+        }
+    }
+
+    private async Task ShowHeartStatus()
+    {
+        if (heartStatus == "Healthy Heart")
+        {
+            statusHexColor = "#B9FBC0";
+            information = string.Empty;
+            statusIconSource = $"../resources/images/healthy_heart_icon.png";
+        }
+        else if (heartStatus == "STEMI" || heartStatus == "NSTEMI")
+        {
+            statusHexColor = "#FBB9B9";
+            information = "Calling Ambulance...";
+            statusIconSource = $"../resources/images/emergency_icon.png";
+        }
+        else
+        {
+            heartStatus = "Unknown";
+            statusHexColor = "#F4F4F4";
+            information = string.Empty;
+            statusIconSource = $"../resources/images/unknown_icon.png";
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task ShowBluetoothState()
+    {
+        await BluetoothLowEnergy.GetBluetoothStatus();
+
+        if (BluetoothLowEnergy.State == BluetoothState.On)
+        {
+            bluetoothIconColor = "#0060A9";
+            bluetoothInformationText = BluetoothLowEnergy.DeviceConnected ? "Connected" : "Not Connected";
+        }
+        else if (BluetoothLowEnergy.State == BluetoothState.Off)
+        {
+            bluetoothIconColor = "#C3C3C3";
+            bluetoothInformationText = string.Empty;
+        }
+        else
+        {
+            bluetoothIconColor = "none";
+            bluetoothInformationText = string.Empty;
+        }
+
+        BluetoothLowEnergy.Ble.StateChanged -= OnBluetoothStateChanged;
+        BluetoothLowEnergy.Ble.StateChanged += OnBluetoothStateChanged;
+
+        BluetoothLowEnergy.Adapter.DeviceConnected -= OnDeviceConnected;
+        BluetoothLowEnergy.Adapter.DeviceDisconnected -= OnDeviceDisconnected;
+
+        BluetoothLowEnergy.Adapter.DeviceConnected += OnDeviceConnected;
+        BluetoothLowEnergy.Adapter.DeviceDisconnected += OnDeviceDisconnected;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void OnBluetoothStateChanged(object sender, BluetoothStateChangedArgs e)
+    {
+        bluetoothIconColor = e.NewState == BluetoothState.On ? "#0060A9" : "#C3C3C3";
+        InvokeAsync(StateHasChanged);
+
+        if (e.NewState == BluetoothState.On)
+        {
+            bluetoothInformationText = BluetoothLowEnergy.DeviceConnected ? "Connected" : "Not Connected";
+        }
+        else
+        {
+            bluetoothInformationText = string.Empty;
+        }
+        
+    }
+
+    private async void OnDeviceConnected(object sender, DeviceEventArgs a)
+    {
+        if (a.Device.Name.Contains("Mercy") || a.Device.Name.Contains("ECG"))
+        {
+            bluetoothInformationText = "Connected";
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async void OnDeviceDisconnected(object sender, DeviceEventArgs a)
+    {
+        if (a.Device.Name.Contains("Mercy") || a.Device.Name.Contains("ECG"))
+        {
+            bluetoothInformationText = BluetoothLowEnergy.State == BluetoothState.On ? "Not Connected" : string.Empty;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task SetAddress()
+    {
+        await RealtimeLocation.GetCurrentLocation();
+
+        currentLocation = RealtimeLocation.CurrentLocation;
+        address = $"{currentLocation?.Locality?.Remove(0, 10)}, {currentLocation?.SubAdminArea}, {currentLocation?.AdminArea}";
+        Console.WriteLine($"Address: {address}");
+
+        await InvokeAsync(StateHasChanged);
+    }
 }
