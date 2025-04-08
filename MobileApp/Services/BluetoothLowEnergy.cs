@@ -164,6 +164,8 @@ namespace MobileApp.Services
                             if (deviceConnected)
                             {
                                 Console.WriteLine($"Successfully connected to: {device.Name}");
+                                StartBackgroundSubscription(device);
+                                Console.WriteLine("Break connect");
                                 break;
                             }
                         }
@@ -178,6 +180,68 @@ namespace MobileApp.Services
             else
             {
                 Console.WriteLine("Already connected to a device.");
+            }
+        }
+
+        private static void StartBackgroundSubscription(IDevice device)
+        {
+            Task.Run(async () =>
+            {
+                Console.WriteLine("Starting background subscription for notifications...");
+                await SubscribeToNotificationsAsync(device);
+                Console.WriteLine("Background subscription completed.");
+            });
+        }
+
+        private static async Task SubscribeToNotificationsAsync(IDevice device)
+        {
+            try
+            {
+                var services = await device.GetServicesAsync();
+                var targetService = services.FirstOrDefault(s => s.Id.ToString() == "4fafc201-1fb5-459e-8fcc-c5c9c331914b");
+
+                if (targetService != null)
+                {
+                    Console.WriteLine($"Found target service: {targetService.Id}");
+
+                    var characteristics = await targetService.GetCharacteristicsAsync();
+                    var targetCharacteristic = characteristics.FirstOrDefault(c => c.Id.ToString() == "beb5483e-36e1-4688-b7f5-ea07361b26a8");
+
+                    if (targetCharacteristic != null)
+                    {
+                        Console.WriteLine($"Found target characteristic: {targetCharacteristic.Id}");
+
+                        targetCharacteristic.ValueUpdated += (s, e) =>
+                        {
+                            var data = e.Characteristic.Value;
+
+                            if (data.Length >= 2)
+                            {
+                                ushort value = BitConverter.ToUInt16(data, 0);
+                                Console.WriteLine($"Data received: {value}");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid data length for UInt16 conversion.");
+                            }
+                        };
+
+                        await targetCharacteristic.StartUpdatesAsync();
+                        Console.WriteLine("Subscribed to notifications.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Target characteristic not found.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Target service not found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error subscribing to notifications: {ex.Message}");
             }
         }
     }
