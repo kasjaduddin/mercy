@@ -1,4 +1,4 @@
-﻿<div class="w-full h-22 bg-[@HexColor] rounded-md py-3 ps-4 pe-4 mb-2 shadow-sm">
+﻿<button class="w-full h-22 bg-[@HexColor] rounded-md py-3 ps-4 pe-4 mb-2 shadow-sm" @onclick="OnSimulateClick">
     <div class="flex justify-between">
         <div>
             <h1 class="text-black font-extrabold text-2xl">@Status</h1>
@@ -6,7 +6,7 @@
         </div>
         <img class="w-16 h-auto object-cover items-start" src="@ImageSource" alt="Status Icon" />
     </div>
-</div>
+</button>
 
 @code {
     [Parameter]
@@ -20,4 +20,15 @@
 
     [Parameter]
     public string ImageSource { get; set; } = $"";
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnSimulate { get; set; }
+
+    private async Task OnSimulateClick(MouseEventArgs e)
+    {
+        if (OnSimulate.HasDelegate)
+        {
+            await OnSimulate.InvokeAsync(e);
+        }
+    }
 }
