@@ -64,6 +64,7 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
         <PackageReference Include="Plugin.BLE" Version="3.1.0" />
         <PackageReference Include="RestSharp" Version="112.1.0" />
+        <PackageReference Include="Syncfusion.Blazor.Charts" Version="29.1.37" />
     </ItemGroup>
 
 </Project>
