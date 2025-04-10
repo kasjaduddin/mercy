@@ -17,7 +17,7 @@
 
     <div class="grid grid-cols-2 gap-3 my-3">
         <HealthMonitorCardView HexColor="@firstHexColor" ImageSource="@heartbeatIconSource" Label="@firstLabel">
-            <div>
+            <div class="h-full content-end">
                 <HeartbeatGraph />
             </div>
         </HealthMonitorCardView>
@@ -46,7 +46,9 @@
             </div>
         </HealthMonitorCardView>
         <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartRateIconSource" Label="@fourthLabel" LabelSize="lg">
-            @* Heart Rate *@
+            <div class="w-full text-center">
+                <HeartRateMonitor />
+            </div>
         </HealthMonitorCardView>
     </div>
     <div>
