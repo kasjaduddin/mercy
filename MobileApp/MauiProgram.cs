@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using MobileApp.Services;
 using DotNetEnv;
+using Syncfusion.Blazor;
 
 namespace MobileApp
 {
@@ -17,6 +18,7 @@ namespace MobileApp
                 });
 
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.AddSyncfusionBlazor();
 
             builder.Services.AddSingleton<RealtimeLocation>();
             builder.Services.AddSingleton<BluetoothLowEnergy>();

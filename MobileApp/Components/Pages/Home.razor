@@ -16,7 +16,9 @@
 
     <div class="grid grid-cols-2 gap-3 my-3">
         <HealthMonitorCardView HexColor="@firstHexColor" ImageSource="@heartbeatIconSource" Label="@firstLabel">
-            @* Heartbeat Graph *@
+            <div>
+                <HeartbeatGraph />
+            </div>
         </HealthMonitorCardView>
         <HealthMonitorCardView ShowIcon=false HexColor="@secondHexColor" ImageSource="@heartbeatIconSource" Label="@secondLabel">
             <div class="justify-items-center">

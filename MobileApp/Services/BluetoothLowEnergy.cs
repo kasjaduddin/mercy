@@ -222,7 +222,7 @@ namespace MobileApp.Services
                             if (data.Length >= 2)
                             {
                                 ushort value = BitConverter.ToUInt16(data, 0);
-                                Console.WriteLine($"Data received: {value}");
+                                App.HeartMonitor.AddData(value);
                             }
                             else
                             {
