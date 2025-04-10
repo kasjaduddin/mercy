@@ -50,7 +50,7 @@
         </HealthMonitorCardView>
     </div>
     <div>
-        <OpenEmergencyContactButtonView Name="@emergencyContactName" />
+        <OpenEmergencyContactButtonView Name="@emergencyContactName" OnOpen="OnOpenContact" />
     </div>
 </div>
 
@@ -91,7 +91,7 @@
     {
         if (string.IsNullOrEmpty(App.CurrentUser?.Username))
         {
-            NavigationManager.NavigateTo("/signup"); Console.WriteLine("Navigating to signup page");
+            NavigationManager.NavigateTo("/signup");
 
             await RealtimeLocation.CheckAndRequestLocationPermission();
             await BluetoothLowEnergy.CheckAndRequestBluetoothPermission();
@@ -238,6 +238,11 @@
         Console.WriteLine($"Address: {address}");
 
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnOpenContact()
+    {
+        NavigationManager.NavigateTo("/contact");
     }
 
     private async Task SimulateStemiAsync()
