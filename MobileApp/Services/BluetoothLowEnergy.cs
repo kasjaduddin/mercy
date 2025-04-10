@@ -12,6 +12,7 @@ namespace MobileApp.Services
         private static IAdapter adapter = CrossBluetoothLE.Current.Adapter;
         private static bool deviceConnected = false;
         private static List<IDevice> deviceList = new List<IDevice>();
+        private static ICharacteristic? activeCharacteristic = null;
 
         public static BluetoothState State
         {
@@ -178,10 +179,11 @@ namespace MobileApp.Services
             else
             {
                 Console.WriteLine("Already connected to a device.");
+
             }
         }
 
-        private static void StartBackgroundSubscription(IDevice device)
+        public static void StartBackgroundSubscription(IDevice device)
         {
             Task.Run(async () =>
             {
@@ -209,13 +211,13 @@ namespace MobileApp.Services
                     Console.WriteLine($"Found target service: {targetService.Id}");
 
                     var characteristics = await targetService.GetCharacteristicsAsync();
-                    var targetCharacteristic = characteristics.FirstOrDefault(c => c.Id.ToString() == "beb5483e-36e1-4688-b7f5-ea07361b26a8");
+                    activeCharacteristic = characteristics.FirstOrDefault(c => c.Id.ToString() == "beb5483e-36e1-4688-b7f5-ea07361b26a8");
 
-                    if (targetCharacteristic != null)
+                    if (activeCharacteristic != null)
                     {
-                        Console.WriteLine($"Found target characteristic: {targetCharacteristic.Id}");
+                        Console.WriteLine($"Found target characteristic: {activeCharacteristic.Id}");
 
-                        targetCharacteristic.ValueUpdated += (s, e) =>
+                        activeCharacteristic.ValueUpdated += (s, e) =>
                         {
                             var data = e.Characteristic.Value;
 
@@ -230,7 +232,7 @@ namespace MobileApp.Services
                             }
                         };
 
-                        await targetCharacteristic.StartUpdatesAsync();
+                        await activeCharacteristic.StartUpdatesAsync();
                         Console.WriteLine("Subscribed to notifications.");
                     }
                     else
@@ -246,6 +248,27 @@ namespace MobileApp.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Error subscribing to notifications: {ex.Message}");
+            }
+        }
+
+        public static async Task StopDataCollection()
+        {
+            try
+            {
+                if (activeCharacteristic != null)
+                {
+                    await activeCharacteristic.StopUpdatesAsync();
+                    activeCharacteristic.ValueUpdated -= (s, e) => { };
+                    Console.WriteLine("Data collection stopped.");
+                }
+                else
+                {
+                    Console.WriteLine("No active characteristic to stop.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error stopping data collection: {ex.Message}");
             }
         }
     }
