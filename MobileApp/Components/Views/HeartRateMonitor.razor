@@ -1,0 +1,44 @@
+﻿<div class="pt-4">
+    @if (heartRate >0)
+    {
+        <h1 class="text-6xl font-bold">@heartRate</h1>
+        <h2 class="text-3xl font-medium">bpm</h2>
+    }
+</div>
+
+@code {
+    private int heartRate;
+    private Timer? _heartRateTimer;
+
+    protected override void OnInitialized()
+    {
+        _heartRateTimer = new Timer(3000);
+        _heartRateTimer.Elapsed += UpdateHeartRate;
+        _heartRateTimer.AutoReset = true;
+        _heartRateTimer.Start();
+    }
+
+    private async void UpdateHeartRate(object? sender, ElapsedEventArgs e)
+    {
+        _heartRateTimer?.Stop();
+
+        int bpm = App.HeartMonitor.CalculateHeartRate(); Console.WriteLine($"Heart rate: {bpm} bpm");
+        if (bpm != -1)
+        {
+            heartRate = bpm;
+        }
+        else
+        {
+            Console.WriteLine("Insufficient data to calculate heart rate.");
+        }
+
+        await InvokeAsync(StateHasChanged);
+        _heartRateTimer?.Start();
+    }
+
+    public void Dispose()
+    {
+        _heartRateTimer?.Stop();
+        _heartRateTimer?.Dispose();
+    }
+}
