@@ -1,4 +1,4 @@
-﻿<SfChart Width="145px" Height="85px" Background="#DBCDF0" Palettes="@palettes">
+﻿<SfChart Width="140px" Height="85px" Background="#DBCDF0" Palettes="@palettes">
     <ChartArea Width="100%">
         <ChartAreaBorder Width="0" />
     </ChartArea>
@@ -6,7 +6,7 @@
     <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Visible=false>
         <ChartAxisMajorGridLines Width="0" />
     </ChartPrimaryXAxis>
-    <ChartPrimaryYAxis Visible=false Minimum="1.6" Maximum="2.8">
+    <ChartPrimaryYAxis Visible=false Minimum="1.7" Maximum="2.4">
         <ChartAxisMajorGridLines Width="0" />
     </ChartPrimaryYAxis>
 
@@ -25,7 +25,7 @@
     {
         ECGData = App.HeartMonitor.GetECGChartData();
 
-        _updateTimer = new Timer(20);
+        _updateTimer = new Timer(50);
         _updateTimer.Elapsed += UpdateECGData;
         _updateTimer.AutoReset = true;
         _updateTimer.Start();

@@ -224,9 +224,7 @@ namespace MobileApp.Services
 
                             if (data.Length >= 4)
                             {
-                                float value = BitConverter.ToSingle(data, 0);
-                                Console.WriteLine($"Received Float Value: {value}");
-                                
+                                float value = BitConverter.ToSingle(data, 0);                                
                                 App.HeartMonitor.AddData(value);
                             }
                             else
