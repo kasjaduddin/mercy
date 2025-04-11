@@ -2,6 +2,7 @@
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
 using Plugin.BLE.Abstractions.Exceptions;
+using System.Diagnostics;
 
 namespace MobileApp.Services
 {
@@ -221,14 +222,16 @@ namespace MobileApp.Services
                         {
                             var data = e.Characteristic.Value;
 
-                            if (data.Length >= 2)
+                            if (data.Length >= 4)
                             {
-                                ushort value = BitConverter.ToUInt16(data, 0);
+                                float value = BitConverter.ToSingle(data, 0);
+                                Console.WriteLine($"Received Float Value: {value}");
+                                
                                 App.HeartMonitor.AddData(value);
                             }
                             else
                             {
-                                Console.WriteLine("Invalid data length for UInt16 conversion.");
+                                Console.WriteLine("Invalid data length for Float conversion.");
                             }
                         };
 

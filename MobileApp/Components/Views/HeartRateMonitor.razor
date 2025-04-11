@@ -8,37 +8,37 @@
 
 @code {
     private int heartRate;
-    private Timer? _heartRateTimer;
+    // private Timer? _heartRateTimer;
 
-    protected override void OnInitialized()
-    {
-        _heartRateTimer = new Timer(3000);
-        _heartRateTimer.Elapsed += UpdateHeartRate;
-        _heartRateTimer.AutoReset = true;
-        _heartRateTimer.Start();
-    }
+    // protected override void OnInitialized()
+    // {
+    //     _heartRateTimer = new Timer(3000);
+    //     _heartRateTimer.Elapsed += UpdateHeartRate;
+    //     _heartRateTimer.AutoReset = true;
+    //     _heartRateTimer.Start();
+    // }
 
-    private async void UpdateHeartRate(object? sender, ElapsedEventArgs e)
-    {
-        _heartRateTimer?.Stop();
+    // private async void UpdateHeartRate(object? sender, ElapsedEventArgs e)
+    // {
+    //     _heartRateTimer?.Stop();
 
-        int bpm = App.HeartMonitor.CalculateHeartRate(); Console.WriteLine($"Heart rate: {bpm} bpm");
-        if (bpm != -1)
-        {
-            heartRate = bpm;
-        }
-        else
-        {
-            Console.WriteLine("Insufficient data to calculate heart rate.");
-        }
+    //     int bpm = App.HeartMonitor.CalculateHeartRate(); Console.WriteLine($"Heart rate: {bpm} bpm");
+    //     if (bpm != -1)
+    //     {
+    //         heartRate = bpm;
+    //     }
+    //     else
+    //     {
+    //         Console.WriteLine("Insufficient data to calculate heart rate.");
+    //     }
 
-        await InvokeAsync(StateHasChanged);
-        _heartRateTimer?.Start();
-    }
+    //     await InvokeAsync(StateHasChanged);
+    //     _heartRateTimer?.Start();
+    // }
 
-    public void Dispose()
-    {
-        _heartRateTimer?.Stop();
-        _heartRateTimer?.Dispose();
-    }
+    // public void Dispose()
+    // {
+    //     _heartRateTimer?.Stop();
+    //     _heartRateTimer?.Dispose();
+    // }
 }

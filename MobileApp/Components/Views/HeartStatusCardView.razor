@@ -1,28 +1,52 @@
-﻿<button class="w-full h-22 bg-[@HexColor] rounded-md py-3 ps-4 pe-4 mb-2 shadow-sm" @onclick="OnSimulateClick">
+﻿<button class="w-full h-22 bg-[@hexColor] rounded-md py-3 ps-4 pe-4 mb-2 shadow-sm" @onclick="OnSimulateClick">
     <div class="flex justify-between">
         <div>
-            <h1 class="text-black font-extrabold text-2xl">@Status</h1>
-            <p class="text-accent font-medium text-sm">@Information</p>
+            <h1 class="text-black font-extrabold text-2xl">@status</h1>
+            <p class="text-accent font-medium text-sm">@information</p>
         </div>
-        <img class="w-16 h-auto object-cover items-start" src="@ImageSource" alt="Status Icon" />
+        <img class="w-16 h-auto object-cover items-start" src="@imageSource" alt="Status Icon" />
     </div>
 </button>
 
 @code {
-    [Parameter]
-    public string HexColor { get; set; } = "";
 
-    [Parameter]
-    public string Status { get; set; } = "";
-
-    [Parameter]
-    public string? Information { get; set; } = "";
-
-    [Parameter]
-    public string ImageSource { get; set; } = $"";
+    private string hexColor = string.Empty;
+    private string status = string.Empty;
+    private string information = string.Empty;
+    private string imageSource = string.Empty;
 
     [Parameter]
     public EventCallback<MouseEventArgs> OnSimulate { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ShowHeartStatus();
+    }
+
+    private async Task ShowHeartStatus()
+    {
+        if (status == "Healthy Heart")
+        {
+            hexColor = "#B9FBC0";
+            information = string.Empty;
+            imageSource = $"../resources/images/healthy_heart_icon.png";
+        }
+        else if (status == "STEMI" || status == "NSTEMI")
+        {
+            hexColor = "#FBB9B9";
+            information = "Calling Ambulance...";
+            imageSource = $"../resources/images/emergency_icon.png";
+        }
+        else
+        {
+            status = "Unknown";
+            hexColor = "#F4F4F4";
+            information = string.Empty;
+            imageSource = $"../resources/images/unknown_icon.png";
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
 
     private async Task OnSimulateClick(MouseEventArgs e)
     {
