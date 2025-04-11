@@ -43,7 +43,7 @@
         </HealthMonitorCardView>
         <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartRateIconSource" Label="@fourthLabel" LabelSize="lg">
             <div class="w-full text-center">
-                @* <HeartRateMonitor /> *@
+                <HeartRateMonitor />
             </div>
         </HealthMonitorCardView>
     </div>
@@ -223,50 +223,60 @@
         simulationCts = new CancellationTokenSource();
 
         Random random = new Random();
-        const int Q_INDEX = 10;    
-        const int R_INDEX = 11;    
-        const int S_INDEX = 13;   
-        const int T_START_INDEX = 25;
+        const int P_INDEX = 5;
+        const int Q_INDEX = 15;
+        const int R_INDEX = 17;
+        const int S_INDEX = 19;
+        const int T_START_INDEX = 30;
+        const int ECG_LENGTH = 40;
 
-        ushort[] ecgWaveform = new ushort[40];
+        float[] ecgWaveform = new float[ECG_LENGTH];
 
         try
         {
             while (simulationMode && !simulationCts.Token.IsCancellationRequested)
             {
-                for (int i = 0; i < ecgWaveform.Length; i++)
+                for (int i = 0; i < ECG_LENGTH; i++)
                 {
-                    ecgWaveform[i] = (ushort)(500 + random.Next(-10, 11));
+                    ecgWaveform[i] = 2500f + random.Next(-20, 21);
                 }
 
-                ecgWaveform[Q_INDEX] = (ushort)(450 + random.Next(-10, 11));
-                App.HeartMonitor.AddData(ecgWaveform[Q_INDEX]);
+                ecgWaveform[P_INDEX] = 2600f + random.Next(-10, 11);
+                App.HeartMonitor.AddData(ConvertToMiliVolt(ecgWaveform[P_INDEX]));
 
-                ecgWaveform[R_INDEX] = (ushort)(800 + random.Next(-50, 51));
-                App.HeartMonitor.AddData(ecgWaveform[R_INDEX]);
+                ecgWaveform[Q_INDEX] = 2400f + random.Next(-10, 11);
+                App.HeartMonitor.AddData(ConvertToMiliVolt(ecgWaveform[Q_INDEX]));
 
-                ecgWaveform[S_INDEX] = (ushort)(480 + random.Next(-20, 21));
-                App.HeartMonitor.AddData(ecgWaveform[S_INDEX]);
+                ecgWaveform[R_INDEX] = 3100f + random.Next(-20, 21);
+                App.HeartMonitor.AddData(ConvertToMiliVolt(ecgWaveform[R_INDEX]));
 
-                for (int i = 0; i < 10; i++)
-                {
-                    ecgWaveform[T_START_INDEX + i] = (ushort)(520 + Math.Sin(i * 0.3) * 20 + random.Next(-5, 6));
-                    App.HeartMonitor.AddData(ecgWaveform[T_START_INDEX + i]);
-                }
+                ecgWaveform[S_INDEX] = 2450f + random.Next(-15, 16);
+                App.HeartMonitor.AddData(ConvertToMiliVolt(ecgWaveform[S_INDEX]));
 
                 for (int i = S_INDEX + 1; i < T_START_INDEX; i++)
                 {
-                    ecgWaveform[i] = (ushort)(500 + random.Next(-5, 6) + 50);
-                    App.HeartMonitor.AddData(ecgWaveform[i]);
+                    ecgWaveform[i] = 2637f + random.Next(-10, 11);
+                    App.HeartMonitor.AddData(ConvertToMiliVolt(ecgWaveform[i]));
                 }
 
-                await Task.Delay(1000, simulationCts.Token);
+                for (int i = 0; i < 10; i++)
+                {
+                    ecgWaveform[T_START_INDEX + i] = 2600f + (float)Math.Sin(i * 0.3) * 50 + random.Next(-10, 11);
+                    App.HeartMonitor.AddData(ConvertToMiliVolt(ecgWaveform[T_START_INDEX + i]));
+                }
+
+                await Task.Delay(4, simulationCts.Token);
             }
         }
         catch (TaskCanceledException)
         {
             Console.WriteLine("STEMI simulation canceled.");
         }
+    }
+
+    private float ConvertToMiliVolt(float arbitaryValue)
+    {
+        return (float)(3.3 * 1000 * arbitaryValue / 4096) / 1100;
     }
 
     private void StopSimulateStemi()
@@ -295,23 +305,7 @@
             Console.WriteLine("Stopping ST-Elevation Myocardial Infarction (STEMI) simulation...");
             StopSimulateStemi();
 
-            if (BluetoothLowEnergy.DeviceConnected)
-            {
-                var connectedDevice = BluetoothLowEnergy.Adapter.ConnectedDevices.FirstOrDefault();
-                if (connectedDevice != null)
-                {
-                    BluetoothLowEnergy.StartBackgroundSubscription(connectedDevice);
-                    Console.WriteLine("Resumed subscribing to data from ESP.");
-                }
-                else
-                {
-                    Console.WriteLine("No connected device found to subscribe.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("No device is connected.");
-            }
+            BluetoothLowEnergy.ConnectToBluetoothDevices();
         }
         else
         {

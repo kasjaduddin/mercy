@@ -14,17 +14,25 @@
     private string status = string.Empty;
     private string information = string.Empty;
     private string imageSource = string.Empty;
+    private Timer? _Timer;
 
     [Parameter]
     public EventCallback<MouseEventArgs> OnSimulate { get; set; }
 
     protected override void OnInitialized()
     {
-        ShowHeartStatus();
+        _Timer = new Timer(3000);
+        _Timer.Elapsed += UpdateHeartStatus;
+        _Timer.AutoReset = true;
+        _Timer.Start();
     }
 
-    private async Task ShowHeartStatus()
+    private async void UpdateHeartStatus(object? sender, ElapsedEventArgs e)
     {
+        _Timer?.Stop();
+
+        status = App.HeartMonitor.HeartCondition;
+
         if (status == "Healthy Heart")
         {
             hexColor = "#B9FBC0";
@@ -46,6 +54,13 @@
         }
 
         await InvokeAsync(StateHasChanged);
+        _Timer?.Start();
+    }
+
+    public void Dispose()
+    {
+        _Timer?.Stop();
+        _Timer?.Dispose();
     }
 
     private async Task OnSimulateClick(MouseEventArgs e)

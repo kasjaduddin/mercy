@@ -6,7 +6,7 @@ namespace MobileApp.Models
     {
         private const int interval = 69;
 
-        private readonly Queue<float> ecgQueue = new();
+        private Queue<float> ecgQueue = new();
         private readonly object lockObj = new();
         private int counter = 0;
         private string heartCondition = string.Empty;
@@ -48,6 +48,16 @@ namespace MobileApp.Models
             }
         }
 
+        public void ClearData()
+        {
+            lock (lockObj)
+            {
+                ecgQueue = new Queue<float>();
+                counter = 0;
+                heartCondition = string.Empty;
+            }
+        }
+
         public string ClassifyHeartCondition()
         {
             lock (lockObj)
@@ -64,17 +74,24 @@ namespace MobileApp.Models
                     lastPRSegmentIndex = rPeakIndex - 3;
                     firstSTSegmentIndex = rPeakIndex + 3;
 
-                    if (lastWave[firstSTSegmentIndex] >= (lastWave[lastPRSegmentIndex] + 2.5f))
+                    try
                     {
-                        return "STEMI";
+                        if (lastWave[firstSTSegmentIndex] >= (lastWave[lastPRSegmentIndex] + 2.5f))
+                        {
+                            return "STEMI";
+                        }
+                        else if (lastWave[firstSTSegmentIndex] <= (lastWave[lastPRSegmentIndex] - 2.5f))
+                        {
+                            return "NSTEMI";
+                        }
+                        else
+                        {
+                            return "Healthy Heart";
+                        }
                     }
-                    else if (lastWave[firstSTSegmentIndex] <= (lastWave[lastPRSegmentIndex] - 2.5f))
+                    catch
                     {
-                        return "NSTEMI";
-                    }
-                    else
-                    {
-                        return "Healthy Heart";
+                        return heartCondition;
                     }
                 }
                 else

@@ -180,7 +180,13 @@ namespace MobileApp.Services
             else
             {
                 Console.WriteLine("Already connected to a device.");
-
+                foreach (var device in deviceList)
+                {
+                    if (device.Name.Contains("Mercy") || device.Name.Contains("ECG"))
+                    {
+                        StartBackgroundSubscription(device);
+                    }
+                }
             }
         }
 
