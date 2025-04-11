@@ -1,9 +1,20 @@
-﻿namespace MobileApp.Models
+﻿using Syncfusion.Blazor.Data;
+
+namespace MobileApp.Models
 {
     public class HeartConditionMonitor
     {
+        private const int interval = 69;
+
         private readonly Queue<float> ecgQueue = new();
         private readonly object lockObj = new();
+        private int counter = 0;
+        private string heartCondition = string.Empty;
+
+        public string HeartCondition
+        { 
+            get => heartCondition; 
+        }
 
         public List<ECGDataPoint> GetECGChartData()
         {
@@ -26,6 +37,14 @@
                 {
                     ecgQueue.Dequeue();
                 }
+
+                counter++;
+                if (counter % interval == 0)
+                {
+                    heartCondition = ClassifyHeartCondition();
+                    Console.WriteLine($"Heart Condition: {heartCondition}");
+                    counter = 0;
+                }
             }
         }
 
@@ -33,56 +52,35 @@
         {
             lock (lockObj)
             {
-                const int requiredDataLength = 140;
-                if (ecgQueue.Count < requiredDataLength) return "Tidak Cukup Data";
+                List<float> lastWave = new List<float>();
+                int lastPRSegmentIndex = 0;
+                int rPeakIndex = 0;
+                int firstSTSegmentIndex = 0;
 
-                var dataArray = ecgQueue.Skip(ecgQueue.Count - requiredDataLength).ToArray();
-                List<int> rPeakIndices = new List<int>();
-                float rThreshold = 0.7f;
-
-                for (int i = 1; i < dataArray.Length - 1; i++)
+                if (ecgQueue.Count > interval)
                 {
-                    if (dataArray[i] > rThreshold && dataArray[i] > dataArray[i - 1] && dataArray[i] > dataArray[i + 1])
+                    lastWave = ecgQueue.Skip(ecgQueue.Count - interval).ToList();
+                    rPeakIndex = lastWave.IndexOf(lastWave.Max());
+                    lastPRSegmentIndex = rPeakIndex - 3;
+                    firstSTSegmentIndex = rPeakIndex + 3;
+
+                    if (lastWave[firstSTSegmentIndex] >= (lastWave[lastPRSegmentIndex] + 2.5f))
                     {
-                        rPeakIndices.Add(i);
+                        return "STEMI";
+                    }
+                    else if (lastWave[firstSTSegmentIndex] <= (lastWave[lastPRSegmentIndex] - 2.5f))
+                    {
+                        return "NSTEMI";
+                    }
+                    else
+                    {
+                        return "Healthy Heart";
                     }
                 }
-
-                if (rPeakIndices.Count < 2) return "Tidak Cukup Data";
-
-                List<int> rPeakIntervals = new List<int>();
-                for (int i = 1; i < rPeakIndices.Count; i++)
-                {
-                    rPeakIntervals.Add(rPeakIndices[i] - rPeakIndices[i - 1]);
-                }
-
-                double avgInterval = rPeakIntervals.Average() * 10;
-                int heartRate = (int)(60000 / avgInterval);
-
-                float stSegmentDeviation = 0;
-                float tWaveDeviation = 0;
-                int sIndex = rPeakIndices[0] + 2;
-                int tStartIndex = rPeakIndices[0] + 10;
-
-                for (int i = sIndex; i < tStartIndex; i++)
-                {
-                    stSegmentDeviation += (dataArray[i] - 0.5f);
-                }
-
-                for (int i = tStartIndex; i < tStartIndex + 10; i++)
-                {
-                    tWaveDeviation += (dataArray[i] - 0.52f);
-                }
-
-                stSegmentDeviation /= (tStartIndex - sIndex);
-                tWaveDeviation /= 10;
-
-                if (stSegmentDeviation > 0.04f)
-                    return "STEMI";
-                else if (stSegmentDeviation < -0.02f || tWaveDeviation < -0.01f)
-                    return "NSTEMI";
                 else
-                    return "Normal";
+                {
+                    return "Need more data";
+                }
             }
         }
     }
