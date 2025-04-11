@@ -1,4 +1,4 @@
-﻿<button type="button" class="w-full min-h-18 border-2 border-black rounded-lg py-2 flex justify-between items-center hover:text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:border-transparent" @onclick="OnEditClick">
+﻿<button type="button" class="w-full min-h-18 border-2 border-black rounded-lg py-2 flex justify-between items-center hover:text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-700 focus:border-transparent" @onclick="OnOpenClick">
     <div class="flex flex-col text-start ps-4">
         <span class="text-xl font-bold">Emergency Call</span>
         <span class="text-lg">@Name</span>
@@ -15,13 +15,13 @@
     public string Name { get; set; } = "";
 
     [Parameter]
-    public EventCallback<MouseEventArgs> OnEdit { get; set; }
+    public EventCallback<MouseEventArgs> OnOpen { get; set; }
 
-    private async Task OnEditClick(MouseEventArgs e)
+    private async Task OnOpenClick(MouseEventArgs e)
     {
-        if (OnEdit.HasDelegate)
+        if (OnOpen.HasDelegate)
         {
-            await OnEdit.InvokeAsync(e);
+            await OnOpen.InvokeAsync(e);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿@page "/"
 
 @inject NavigationManager NavigationManager
-@using Plugin.BLE.Abstractions.Contracts
 
 <div class="container">
     <div class="mb-1">
@@ -9,15 +8,14 @@
         <p class="text-accent-light text-lg">@greeting</p>
     </div>
     <div>
-        <HeartStatusCardView HexColor="@statusHexColor"
-        Status="@heartStatus"
-        Information="@information"
-        ImageSource="@statusIconSource" />
+        <HeartStatusCardView OnSimulate="OnStemiSimulation" />
     </div>
 
     <div class="grid grid-cols-2 gap-3 my-3">
         <HealthMonitorCardView HexColor="@firstHexColor" ImageSource="@heartbeatIconSource" Label="@firstLabel">
-            @* Heartbeat Graph *@
+            <div class="h-full content-end">
+                <HeartbeatGraph />
+            </div>
         </HealthMonitorCardView>
         <HealthMonitorCardView ShowIcon=false HexColor="@secondHexColor" ImageSource="@heartbeatIconSource" Label="@secondLabel">
             <div class="justify-items-center">
@@ -43,30 +41,38 @@
                 </div>
             </div>
         </HealthMonitorCardView>
-        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartbeatIconSource" Label="@fourthLabel" LabelSize="lg">
-            @* Heart Rate *@
+        <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartRateIconSource" Label="@fourthLabel" LabelSize="lg">
+            <div class="w-full text-center">
+                @* <HeartRateMonitor /> *@
+            </div>
         </HealthMonitorCardView>
     </div>
     <div>
-        <OpenEmergencyContactButtonView Name="@emergencyContactName" />
+        <OpenEmergencyContactButtonView Name="@emergencyContactName" OnOpen="OnOpenContact" />
     </div>
 </div>
 
 @code {
     private string? userName = App.CurrentUser?.Username;
-    private string greeting = "";
+    private string greeting = string.Empty;
 
-    private string statusHexColor = "#B9FBC0";
-    private string heartStatus = "Healthy Heart";
-    private string? information = "";
+    private string heartStatus = string.Empty;
+    private string statusHexColor = string.Empty;
+    private string information = string.Empty;
+    private string statusIconSource = string.Empty;
 
-    private string statusIconSource = $"../resources/images/healthy_heart_icon.png";
+    private string firstHexColor = "#DBCDF0";
+    private string secondHexColor = "#F7D9C4";
+    private string thirdHexColor = "#C6DEF1";
+    private string fourthHexColor = "#F2C6DE";
 
-    // private string statusHexColor = "#FBB9B9";
-    // private string heartStatus = "STEMI";
-    // private string? information = "Calling Ambulance...";
+    private string firstLabel = "Heartbeat";
+    private string secondLabel = "Bluetooth";
+    private string thirdLabel = "Location";
+    private string fourthLabel = "Heart Rate";
 
-    // private string statusIconSource = $"../resources/images/emergency_icon.png";
+    private string heartbeatIconSource = $"../resources/images/heartbeat_icon.png";
+    private string heartRateIconSource = $"../resources/images/heart_rate_icon.png";
 
     private string bluetoothIconColor = "none";
     private string bluetoothInformationText = string.Empty;
@@ -74,46 +80,35 @@
     private CurrentLocation? currentLocation = new CurrentLocation();
     private string address = string.Empty;
 
-    private string firstHexColor = "#DBCDF0";
-    private string secondHexColor = "#F7D9C4";
-    private string thirdHexColor = "#C6DEF1";
-    private string fourthHexColor = "#F2C6DE";
-
-    private string heartbeatIconSource = $"../resources/images/heartbeat_icon.png";
-    private string heartRateIconSource = $"../resources/images/heartbeat_icon.png";
-
-    private string firstLabel = "Heartbeat";
-    private string secondLabel = "Bluetooth";
-    private string thirdLabel = "Location";
-    private string fourthLabel = "Heart Rate";
-
     private string? emergencyContactName = App.EmergencyContact?.ContactName;
+
+    private bool simulationMode = false;
+    private CancellationTokenSource? simulationCts;
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         if (string.IsNullOrEmpty(App.CurrentUser?.Username))
         {
-            NavigationManager.NavigateTo("/signup"); Console.WriteLine("Navigating to signup page");
+            NavigationManager.NavigateTo("/signup");
 
             await RealtimeLocation.CheckAndRequestLocationPermission();
             await BluetoothLowEnergy.CheckAndRequestBluetoothPermission();
         }
         else
         {
-            await base.SetParametersAsync(parameters); Console.WriteLine("Setting parameters");
+            await base.SetParametersAsync(parameters);
 
             GetTime();
 
-            await BluetoothLowEnergy.ConnectToBluetoothDevices();
+            // await ShowHeartStatus();
+
             ShowBluetoothState();
 
-            await RealtimeLocation.GetCurrentLocation();
-            currentLocation = RealtimeLocation.CurrentLocation;
             await SetAddress();
         }
     }
 
-    private void GetTime()
+    private async void GetTime()
     {
         DateTime currentDate = DateTime.Now;
         int hour = currentDate.Hour;
@@ -141,8 +136,10 @@
         }
     }
 
-    private void ShowBluetoothState()
+    public async Task ShowBluetoothState()
     {
+        await BluetoothLowEnergy.GetBluetoothStatus();
+
         if (BluetoothLowEnergy.State == BluetoothState.On)
         {
             bluetoothIconColor = "#0060A9";
@@ -159,17 +156,170 @@
             bluetoothInformationText = string.Empty;
         }
 
-        BluetoothLowEnergy.Ble.StateChanged += async (s, e) =>
+        BluetoothLowEnergy.Ble.StateChanged -= OnBluetoothStateChanged;
+        BluetoothLowEnergy.Ble.StateChanged += OnBluetoothStateChanged;
+
+        BluetoothLowEnergy.Adapter.DeviceConnected -= OnDeviceConnected;
+        BluetoothLowEnergy.Adapter.DeviceDisconnected -= OnDeviceDisconnected;
+
+        BluetoothLowEnergy.Adapter.DeviceConnected += OnDeviceConnected;
+        BluetoothLowEnergy.Adapter.DeviceDisconnected += OnDeviceDisconnected;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void OnBluetoothStateChanged(object sender, BluetoothStateChangedArgs e)
+    {
+        bluetoothIconColor = e.NewState == BluetoothState.On ? "#0060A9" : "#C3C3C3";
+        InvokeAsync(StateHasChanged);
+
+        if (e.NewState == BluetoothState.On)
         {
-            ShowBluetoothState();
-            await InvokeAsync(StateHasChanged);
-        };
+            bluetoothInformationText = BluetoothLowEnergy.DeviceConnected ? "Connected" : "Not Connected";
+        }
+        else
+        {
+            bluetoothInformationText = string.Empty;
+        }
+
+    }
+
+    private async void OnDeviceConnected(object sender, DeviceEventArgs a)
+    {
+        if (a.Device.Name.Contains("Mercy") || a.Device.Name.Contains("ECG"))
+        {
+            bluetoothInformationText = "Connected";
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async void OnDeviceDisconnected(object sender, DeviceEventArgs a)
+    {
+        if (a.Device.Name.Contains("Mercy") || a.Device.Name.Contains("ECG"))
+        {
+            bluetoothInformationText = BluetoothLowEnergy.State == BluetoothState.On ? "Not Connected" : string.Empty;
+            InvokeAsync(StateHasChanged);
+        }
     }
 
     private async Task SetAddress()
     {
+        await RealtimeLocation.GetCurrentLocation();
+
+        currentLocation = RealtimeLocation.CurrentLocation;
         address = $"{currentLocation?.Locality?.Remove(0, 10)}, {currentLocation?.SubAdminArea}, {currentLocation?.AdminArea}";
         Console.WriteLine($"Address: {address}");
+
         await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnOpenContact()
+    {
+        NavigationManager.NavigateTo("/contact");
+    }
+
+    private async Task SimulateStemiAsync()
+    {
+        simulationCts = new CancellationTokenSource();
+
+        Random random = new Random();
+        const int Q_INDEX = 10;    
+        const int R_INDEX = 11;    
+        const int S_INDEX = 13;   
+        const int T_START_INDEX = 25;
+
+        ushort[] ecgWaveform = new ushort[40];
+
+        try
+        {
+            while (simulationMode && !simulationCts.Token.IsCancellationRequested)
+            {
+                for (int i = 0; i < ecgWaveform.Length; i++)
+                {
+                    ecgWaveform[i] = (ushort)(500 + random.Next(-10, 11));
+                }
+
+                ecgWaveform[Q_INDEX] = (ushort)(450 + random.Next(-10, 11));
+                App.HeartMonitor.AddData(ecgWaveform[Q_INDEX]);
+
+                ecgWaveform[R_INDEX] = (ushort)(800 + random.Next(-50, 51));
+                App.HeartMonitor.AddData(ecgWaveform[R_INDEX]);
+
+                ecgWaveform[S_INDEX] = (ushort)(480 + random.Next(-20, 21));
+                App.HeartMonitor.AddData(ecgWaveform[S_INDEX]);
+
+                for (int i = 0; i < 10; i++)
+                {
+                    ecgWaveform[T_START_INDEX + i] = (ushort)(520 + Math.Sin(i * 0.3) * 20 + random.Next(-5, 6));
+                    App.HeartMonitor.AddData(ecgWaveform[T_START_INDEX + i]);
+                }
+
+                for (int i = S_INDEX + 1; i < T_START_INDEX; i++)
+                {
+                    ecgWaveform[i] = (ushort)(500 + random.Next(-5, 6) + 50);
+                    App.HeartMonitor.AddData(ecgWaveform[i]);
+                }
+
+                await Task.Delay(1000, simulationCts.Token);
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            Console.WriteLine("STEMI simulation canceled.");
+        }
+    }
+
+    private void StopSimulateStemi()
+    {
+        if (!simulationMode)
+        {
+            Console.WriteLine("No STEMI simulation is running to stop.");
+            return;
+        }
+
+        if (simulationCts != null)
+        {
+            simulationCts.Cancel();
+            simulationCts.Dispose();
+            simulationCts = null;
+        }
+
+        simulationMode = false;
+        Console.WriteLine("STEMI simulation has been stopped.");
+    }
+
+    private async Task OnStemiSimulation()
+    {
+        if (simulationMode)
+        {
+            Console.WriteLine("Stopping ST-Elevation Myocardial Infarction (STEMI) simulation...");
+            StopSimulateStemi();
+
+            if (BluetoothLowEnergy.DeviceConnected)
+            {
+                var connectedDevice = BluetoothLowEnergy.Adapter.ConnectedDevices.FirstOrDefault();
+                if (connectedDevice != null)
+                {
+                    BluetoothLowEnergy.StartBackgroundSubscription(connectedDevice);
+                    Console.WriteLine("Resumed subscribing to data from ESP.");
+                }
+                else
+                {
+                    Console.WriteLine("No connected device found to subscribe.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No device is connected.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Simulating ST-Elevation Myocardial Infarction (STEMI)...");
+            await BluetoothLowEnergy.StopDataCollection();
+
+            simulationMode = true;
+            await Task.Run(SimulateStemiAsync);
+        }
     }
 }

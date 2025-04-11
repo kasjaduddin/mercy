@@ -1,0 +1,47 @@
+﻿<SfChart Width="145px" Height="85px" Background="#DBCDF0" Palettes="@palettes">
+    <ChartArea Width="100%">
+        <ChartAreaBorder Width="0" />
+    </ChartArea>
+
+    <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Visible=false>
+        <ChartAxisMajorGridLines Width="0" />
+    </ChartPrimaryXAxis>
+    <ChartPrimaryYAxis Visible=false Minimum="1.6" Maximum="2.8">
+        <ChartAxisMajorGridLines Width="0" />
+    </ChartPrimaryYAxis>
+
+    <ChartSeries DataSource="@ECGData" XName="Time" YName="Value" Type="ChartSeriesType.Line"
+                 PointColorMapping="#000000" Width="3">
+    </ChartSeries>
+</SfChart>
+
+@code {
+    private String[] palettes = new String[] { "#000000" };
+    private List<ECGDataPoint> ECGData = new();
+    private ChartMarker ECGMarker = new ChartMarker { Visible = true, Width = 4, Height = 4 };
+    private Timer _updateTimer;
+
+    protected override void OnInitialized()
+    {
+        ECGData = App.HeartMonitor.GetECGChartData();
+
+        _updateTimer = new Timer(20);
+        _updateTimer.Elapsed += UpdateECGData;
+        _updateTimer.AutoReset = true;
+        _updateTimer.Start();
+    }
+
+    private async void UpdateECGData(object? sender, ElapsedEventArgs e)
+    {
+        _updateTimer.Stop();
+        ECGData = App.HeartMonitor.GetECGChartData();
+        await InvokeAsync(StateHasChanged);
+        _updateTimer.Start();
+    }
+
+    public void Dispose()
+    {
+        _updateTimer?.Stop();
+        _updateTimer?.Dispose();
+    }
+}

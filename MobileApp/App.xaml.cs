@@ -7,6 +7,8 @@ namespace MobileApp
         public static User? CurrentUser { get; set; }
         public static EmergencyContact? EmergencyContact { get; set; }
 
+        public static readonly HeartConditionMonitor HeartMonitor = new HeartConditionMonitor();
+
         public App()
         {
             InitializeComponent();
