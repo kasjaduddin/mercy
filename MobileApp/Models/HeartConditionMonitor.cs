@@ -2,7 +2,7 @@
 {
     public class HeartConditionMonitor
     {
-        private readonly Queue<ushort> ecgQueue = new();
+        private readonly Queue<float> ecgQueue = new();
         private readonly object lockObj = new();
 
         public List<ECGDataPoint> GetECGChartData()
@@ -17,26 +17,28 @@
             }
         }
 
-        public void AddData(ushort data)
+        public void AddData(float data)
         {
             lock (lockObj)
             {
                 ecgQueue.Enqueue(data);
                 if (ecgQueue.Count > 180)
+                {
                     ecgQueue.Dequeue();
+                }
             }
         }
 
-        public int CalculateHeartRate()
+        public string ClassifyHeartCondition()
         {
             lock (lockObj)
             {
-                int requiredDataLength = 140;
-                if (ecgQueue.Count < requiredDataLength) return -1;
+                const int requiredDataLength = 140;
+                if (ecgQueue.Count < requiredDataLength) return "Tidak Cukup Data";
 
                 var dataArray = ecgQueue.Skip(ecgQueue.Count - requiredDataLength).ToArray();
                 List<int> rPeakIndices = new List<int>();
-                ushort rThreshold = 700;
+                float rThreshold = 0.7f;
 
                 for (int i = 1; i < dataArray.Length - 1; i++)
                 {
@@ -46,7 +48,7 @@
                     }
                 }
 
-                if (rPeakIndices.Count < 2) return -1;
+                if (rPeakIndices.Count < 2) return "Tidak Cukup Data";
 
                 List<int> rPeakIntervals = new List<int>();
                 for (int i = 1; i < rPeakIndices.Count; i++)
@@ -57,7 +59,30 @@
                 double avgInterval = rPeakIntervals.Average() * 10;
                 int heartRate = (int)(60000 / avgInterval);
 
-                return heartRate;
+                float stSegmentDeviation = 0;
+                float tWaveDeviation = 0;
+                int sIndex = rPeakIndices[0] + 2;
+                int tStartIndex = rPeakIndices[0] + 10;
+
+                for (int i = sIndex; i < tStartIndex; i++)
+                {
+                    stSegmentDeviation += (dataArray[i] - 0.5f);
+                }
+
+                for (int i = tStartIndex; i < tStartIndex + 10; i++)
+                {
+                    tWaveDeviation += (dataArray[i] - 0.52f);
+                }
+
+                stSegmentDeviation /= (tStartIndex - sIndex);
+                tWaveDeviation /= 10;
+
+                if (stSegmentDeviation > 0.04f)
+                    return "STEMI";
+                else if (stSegmentDeviation < -0.02f || tWaveDeviation < -0.01f)
+                    return "NSTEMI";
+                else
+                    return "Normal";
             }
         }
     }

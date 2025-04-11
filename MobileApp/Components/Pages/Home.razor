@@ -8,11 +8,7 @@
         <p class="text-accent-light text-lg">@greeting</p>
     </div>
     <div>
-        <HeartStatusCardView HexColor="@statusHexColor"
-        Status="@heartStatus"
-        Information="@information"
-        ImageSource="@statusIconSource"
-        OnSimulate="OnStemiSimulation" />
+        <HeartStatusCardView OnSimulate="OnStemiSimulation" />
     </div>
 
     <div class="grid grid-cols-2 gap-3 my-3">
@@ -47,7 +43,7 @@
         </HealthMonitorCardView>
         <HealthMonitorCardView HexColor="@fourthHexColor" ImageSource="@heartRateIconSource" Label="@fourthLabel" LabelSize="lg">
             <div class="w-full text-center">
-                <HeartRateMonitor />
+                @* <HeartRateMonitor /> *@
             </div>
         </HealthMonitorCardView>
     </div>
@@ -104,7 +100,7 @@
 
             GetTime();
 
-            await ShowHeartStatus();
+            // await ShowHeartStatus();
 
             ShowBluetoothState();
 
@@ -138,31 +134,6 @@
         {
             greeting = String.Empty;
         }
-    }
-
-    private async Task ShowHeartStatus()
-    {
-        if (heartStatus == "Healthy Heart")
-        {
-            statusHexColor = "#B9FBC0";
-            information = string.Empty;
-            statusIconSource = $"../resources/images/healthy_heart_icon.png";
-        }
-        else if (heartStatus == "STEMI" || heartStatus == "NSTEMI")
-        {
-            statusHexColor = "#FBB9B9";
-            information = "Calling Ambulance...";
-            statusIconSource = $"../resources/images/emergency_icon.png";
-        }
-        else
-        {
-            heartStatus = "Unknown";
-            statusHexColor = "#F4F4F4";
-            information = string.Empty;
-            statusIconSource = $"../resources/images/unknown_icon.png";
-        }
-
-        await InvokeAsync(StateHasChanged);
     }
 
     public async Task ShowBluetoothState()
