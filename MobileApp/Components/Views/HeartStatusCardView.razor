@@ -9,11 +9,10 @@
 </button>
 
 @code {
-
-    private string hexColor = string.Empty;
-    private string status = string.Empty;
+    private string hexColor = "#F4F4F4";
+    private string status = "Unknown";
     private string information = string.Empty;
-    private string imageSource = string.Empty;
+    private string imageSource = $"../resources/images/unknown_icon.png";
     private Timer? _Timer;
 
     [Parameter]

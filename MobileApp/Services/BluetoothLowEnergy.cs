@@ -2,7 +2,6 @@
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
 using Plugin.BLE.Abstractions.Exceptions;
-using System.Diagnostics;
 
 namespace MobileApp.Services
 {
@@ -276,6 +275,31 @@ namespace MobileApp.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Error stopping data collection: {ex.Message}");
+            }
+        }
+
+        public static async Task SendCommandToESP(char command)
+        {
+            try
+            {
+                if (activeCharacteristic != null)
+                {
+                    byte[] commandData = new byte[] { (byte)command };
+                    await activeCharacteristic.WriteAsync(commandData);
+                    foreach (var item in commandData)
+                    {
+                        Console.WriteLine($"Command data '{item}' sent to ESP.");
+                    }
+                    Console.WriteLine($"Sent command '{command}' to ESP.");
+                }
+                else
+                {
+                    Console.WriteLine("No active characteristic found to send data.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending command to ESP: {ex.Message}");
             }
         }
     }
