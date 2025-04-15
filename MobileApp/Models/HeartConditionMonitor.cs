@@ -94,7 +94,7 @@ namespace MobileApp.Models
                                 Console.WriteLine($"Address: {location}");
                                 string message = $"Panggilan darurat serangan jantung dari MERCy. Atas nama {App.CurrentUser?.Username}. Lokasi pada {location}";
                                 EmergencyCall emergencyCall = new EmergencyCall();
-                                emergencyCall.SendEmergencyMessage(["628995109742"], message);
+                                emergencyCall.SendEmergencyMessage([""], message);
                             }
                             return "STEMI";
                         }
