@@ -179,7 +179,13 @@ namespace MobileApp.Services
             else
             {
                 Console.WriteLine("Already connected to a device.");
-
+                foreach (var device in deviceList)
+                {
+                    if (device.Name.Contains("Mercy") || device.Name.Contains("ECG"))
+                    {
+                        StartBackgroundSubscription(device);
+                    }
+                }
             }
         }
 
@@ -221,14 +227,14 @@ namespace MobileApp.Services
                         {
                             var data = e.Characteristic.Value;
 
-                            if (data.Length >= 2)
+                            if (data.Length >= 4)
                             {
-                                ushort value = BitConverter.ToUInt16(data, 0);
+                                float value = BitConverter.ToSingle(data, 0);                                
                                 App.HeartMonitor.AddData(value);
                             }
                             else
                             {
-                                Console.WriteLine("Invalid data length for UInt16 conversion.");
+                                Console.WriteLine("Invalid data length for Float conversion.");
                             }
                         };
 
@@ -269,6 +275,31 @@ namespace MobileApp.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Error stopping data collection: {ex.Message}");
+            }
+        }
+
+        public static async Task SendCommandToESP(char command)
+        {
+            try
+            {
+                if (activeCharacteristic != null)
+                {
+                    byte[] commandData = new byte[] { (byte)command };
+                    await activeCharacteristic.WriteAsync(commandData);
+                    foreach (var item in commandData)
+                    {
+                        Console.WriteLine($"Command data '{item}' sent to ESP.");
+                    }
+                    Console.WriteLine($"Sent command '{command}' to ESP.");
+                }
+                else
+                {
+                    Console.WriteLine("No active characteristic found to send data.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending command to ESP: {ex.Message}");
             }
         }
     }
